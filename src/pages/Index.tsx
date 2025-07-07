@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Users, Briefcase, Brain, MessageSquare, Calendar, Search, Plus } from "lucide-react";
+import { Users, Briefcase, Brain, MessageSquare, Calendar, Search, Plus, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import JobPostingModal from "@/components/JobPostingModal";
 import AIChat from "@/components/AIChat";
 import CandidateCard from "@/components/CandidateCard";
@@ -101,6 +102,12 @@ const Index = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
+              <Link to="/applicant">
+                <Button variant="outline">
+                  Job Seeker Portal
+                  <ArrowRight className="h-4 w-4 ml-2" />
+                </Button>
+              </Link>
               <Button
                 onClick={() => setIsJobModalOpen(true)}
                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
