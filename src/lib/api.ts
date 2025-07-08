@@ -1,7 +1,8 @@
 import config from '@/config';
 
 // API Configuration
-const API_BASE_URL = 'http://localhost:3001/api/v1';
+const API_BASE_URL = 'https://ai-recruiter-backend-qq29.onrender.com/api/v1';
+// const API_BASE_URL = 'http://localhost:3001/api/v1';
 
 // Types
 export interface User {
