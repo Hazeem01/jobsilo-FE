@@ -74,6 +74,7 @@ import {
 import { AuthModal } from "@/components/AuthModal";
 import JobCard from "@/components/JobCard";
 import type { Job, Interview, FileInfo } from "@/lib/api";
+import { Helmet } from 'react-helmet-async';
 
 // Document templates for different industries
 const documentTemplates = {
@@ -465,6 +466,12 @@ const Applicant = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <Helmet>
+        <title>Applicants - Clever Hire</title>
+        <meta name="description" content="View and manage job applicants on Clever Hire, the smart recruitment platform." />
+        <meta name="keywords" content="applicants, recruitment, hiring, Clever Hire, job platform, candidate management" />
+        <link rel="canonical" href="https://cleverhire.com/applicants" />
+      </Helmet>
       {/* Header */}
       <header className="bg-white/80 backdrop-blur-md border-b border-white/20 sticky top-0 z-50">
         <div className="container mx-auto px-4 sm:px-6 py-4">
@@ -474,7 +481,7 @@ const Applicant = () => {
                 <Brain className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-xl sm:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                AI Recruiter
+                Clever Hire
               </h1>
               <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
                 For Job Seekers

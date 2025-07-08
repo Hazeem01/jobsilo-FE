@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setUser(response.data.user);
       toast({
         title: "Registration successful",
-        description: `Welcome to AI Recruiter, ${response.data.user.firstName}!`,
+        description: `Welcome to Clever Hire, ${response.data.user.firstName}!`,
       });
     } catch (error) {
       toast({

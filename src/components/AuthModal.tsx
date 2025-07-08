@@ -120,7 +120,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       <DialogContent className="sm:max-w-md w-full max-w-[95vw] p-3 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl shadow-lg bg-white/95 dark:bg-gray-900/95 overflow-y-auto max-h-[90vh] sm:max-h-[80vh] flex flex-col justify-center">
         <DialogHeader>
           <DialogTitle className="text-center text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Welcome to AI Recruiter
+            Welcome to Clever Hire
           </DialogTitle>
         </DialogHeader>
         

@@ -6,6 +6,7 @@ import { Brain, Users, Briefcase, FileText, MessageSquare, ArrowRight, CheckCirc
 import { Link } from "react-router-dom";
 import { AuthModal } from "@/components/AuthModal";
 import { Navigation } from "@/components/Navigation";
+import { Helmet } from 'react-helmet-async';
 
 const Landing = () => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -113,7 +114,7 @@ const Landing = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Why Choose AI Recruiter?
+              Why Choose Clever Hire?
             </h2>
             <div className="space-y-4">
               {benefits.map((benefit, index) => (
@@ -165,7 +166,7 @@ const Landing = () => {
             Ready to Transform Your Recruitment?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of recruiters and job seekers using AI Recruiter
+            Join thousands of recruiters and job seekers using Clever Hire
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
@@ -193,11 +194,11 @@ const Landing = () => {
               <Brain className="h-6 w-6 text-white" />
             </div>
             <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              AI Recruiter
+              Clever Hire
             </h3>
           </div>
           <p className="text-gray-600">
-            © 2024 AI Recruiter. All rights reserved.
+            © 2024 Clever Hire. All rights reserved.
           </p>
         </div>
       </footer>
@@ -207,6 +208,13 @@ const Landing = () => {
         isOpen={isAuthModalOpen} 
         onClose={() => setIsAuthModalOpen(false)} 
       />
+
+      <Helmet>
+        <title>Clever Hire - Smart Recruitment Platform</title>
+        <meta name="description" content="Clever Hire is an AI-powered recruitment platform for smart hiring, candidate matching, and streamlined talent acquisition." />
+        <meta name="keywords" content="recruitment, hiring, AI, job matching, talent acquisition, HR, careers, Clever Hire, smart hiring, job platform" />
+        <link rel="canonical" href="https://cleverhire.com/" />
+      </Helmet>
     </div>
   );
 };
