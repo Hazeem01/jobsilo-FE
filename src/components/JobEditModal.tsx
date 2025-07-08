@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,16 +8,48 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { X, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import { useCreateJob } from "@/hooks/use-api";
+import { useUpdateJob } from "@/hooks/use-api";
+import type { Job } from "@/lib/api";
 
-interface JobPostingModalProps {
+interface JobEditModalProps {
+  job: Job | null;
   isOpen: boolean;
   onClose: () => void;
 }
 
-const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
+// Helper function to parse requirements JSON string
+const parseRequirements = (requirements: string): string[] => {
+  try {
+    if (!requirements) return [];
+    return JSON.parse(requirements);
+  } catch (error) {
+    console.error('Failed to parse requirements:', error);
+    return [];
+  }
+};
+
+// Helper function to convert salary range back to dropdown value
+const convertSalaryToDropdownValue = (salaryRange: string | null): string => {
+  if (!salaryRange) return "select";
+  if (salaryRange === "Competitive") return "competitive";
+  if (salaryRange === "Negotiable") return "negotiable";
+  if (salaryRange === "$300,000+") return "300000+";
+  
+  // Extract numbers from format like "$80,000 - $120,000"
+  const match = salaryRange.match(/\$([0-9,]+)\s*-\s*\$([0-9,]+)/);
+  if (match) {
+    const min = match[1].replace(/,/g, "");
+    const max = match[2].replace(/,/g, "");
+    return `${min}-${max}`;
+  }
+  
+  return "select";
+};
+
+const JobEditModal = ({ job, isOpen, onClose }: JobEditModalProps) => {
   const { toast } = useToast();
-  const createJob = useCreateJob();
+  const updateJob = useUpdateJob();
+  
   const [formData, setFormData] = useState({
     title: "",
     location: "",
@@ -26,6 +58,9 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
     description: "",
     requirements: "",
   });
+  
+  const [skills, setSkills] = useState<string[]>([]);
+  const [currentSkill, setCurrentSkill] = useState("");
 
   // Predefined salary ranges
   const salaryRanges = [
@@ -58,8 +93,23 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
     const [min, max] = salaryRange.split("-").map(num => parseInt(num.replace(/,/g, "")));
     return `$${min.toLocaleString()} - $${max.toLocaleString()}`;
   };
-  const [skills, setSkills] = useState<string[]>([]);
-  const [currentSkill, setCurrentSkill] = useState("");
+
+  // Initialize form data when job changes
+  useEffect(() => {
+    if (job) {
+      const requirements = parseRequirements(job.requirements);
+      setFormData({
+        title: job.title,
+        location: job.location,
+        job_type: job.job_type || "full-time",
+        salary_range: convertSalaryToDropdownValue(job.salary_range),
+        description: job.description,
+        requirements: "",
+      });
+      setSkills(requirements);
+      setCurrentSkill("");
+    }
+  }, [job]);
 
   const handleAddSkill = () => {
     if (currentSkill.trim() && !skills.includes(currentSkill.trim())) {
@@ -75,50 +125,65 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    try {
-      const jobData = {
-        title: formData.title,
-        description: formData.description,
-        requirements: skills.length > 0 ? skills : [],
-        location: formData.location,
-        salary: convertSalaryToApiFormat(formData.salary_range),
-        type: formData.job_type,
-        status: "active" as const,
-      };
+    if (!job) return;
+    
+    // Check if any changes were made
+    const originalRequirements = parseRequirements(job.requirements);
+    const originalSalaryRange = convertSalaryToDropdownValue(job.salary_range);
+    
+    const hasChanges = 
+      formData.title !== job.title ||
+      formData.description !== job.description ||
+      formData.location !== job.location ||
+      formData.job_type !== job.job_type ||
+      formData.salary_range !== originalSalaryRange ||
+      JSON.stringify(skills.sort()) !== JSON.stringify(originalRequirements.sort());
+    
+    if (!hasChanges) {
+      toast({
+        title: "No Changes Made",
+        description: "No changes were detected. Please make changes before updating.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+          try {
+        const jobData = {
+          title: formData.title,
+          description: formData.description,
+          requirements: skills.length > 0 ? skills : [],
+          location: formData.location,
+          salary_range: convertSalaryToApiFormat(formData.salary_range),
+          type: formData.job_type,
+          status: job.status, // Keep the same status
+        };
 
-      await createJob.mutateAsync(jobData);
+        await updateJob.mutateAsync({ id: job.id, data: jobData });
       
       toast({
-        title: "Job Posted Successfully!",
-        description: "Your job posting has been published and is now live.",
+        title: "Job Updated Successfully!",
+        description: "Your job posting has been updated and is now live.",
       });
       
-      // Reset form
-      setFormData({
-        title: "",
-        location: "",
-        job_type: "full-time",
-        salary_range: "select",
-        description: "",
-        requirements: "",
-      });
-      setSkills([]);
       onClose();
     } catch (error) {
       toast({
-        title: "Failed to post job",
-        description: error instanceof Error ? error.message : "An error occurred while posting the job",
+        title: "Failed to update job",
+        description: error instanceof Error ? error.message : "An error occurred while updating the job",
         variant: "destructive",
       });
     }
   };
+
+  if (!job) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            Post New Job
+            Edit Job: {job.title}
           </DialogTitle>
         </DialogHeader>
         
@@ -131,7 +196,7 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
               onChange={(e) => setFormData({...formData, title: e.target.value})}
               placeholder="e.g. Senior Frontend Developer"
               required
-              disabled={createJob.isPending}
+              disabled={updateJob.isPending}
             />
           </div>
           
@@ -144,13 +209,13 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
                 onChange={(e) => setFormData({...formData, location: e.target.value})}
                 placeholder="e.g. San Francisco, CA or Remote"
                 required
-                disabled={createJob.isPending}
+                disabled={updateJob.isPending}
               />
             </div>
             
             <div>
               <Label htmlFor="job_type">Job Type *</Label>
-              <Select value={formData.job_type} onValueChange={(value) => setFormData({...formData, job_type: value as 'full-time' | 'part-time' | 'contract' | 'internship'})} disabled={createJob.isPending}>
+              <Select value={formData.job_type} onValueChange={(value) => setFormData({...formData, job_type: value as 'full-time' | 'part-time' | 'contract' | 'internship'})} disabled={updateJob.isPending}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select job type" />
                 </SelectTrigger>
@@ -169,7 +234,7 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
             <Select 
               value={formData.salary_range} 
               onValueChange={(value) => setFormData({...formData, salary_range: value})}
-              disabled={createJob.isPending}
+              disabled={updateJob.isPending}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Select salary range" />
@@ -193,7 +258,7 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
               placeholder="Describe the role, responsibilities, and what you're looking for..."
               rows={6}
               required
-              disabled={createJob.isPending}
+              disabled={updateJob.isPending}
             />
           </div>
           
@@ -205,9 +270,9 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
                 onChange={(e) => setCurrentSkill(e.target.value)}
                 placeholder="Add a skill..."
                 onKeyPress={(e) => e.key === "Enter" && (e.preventDefault(), handleAddSkill())}
-                disabled={createJob.isPending}
+                disabled={updateJob.isPending}
               />
-              <Button type="button" onClick={handleAddSkill} variant="outline" disabled={createJob.isPending}>
+              <Button type="button" onClick={handleAddSkill} variant="outline" disabled={updateJob.isPending}>
                 Add
               </Button>
             </div>
@@ -221,7 +286,7 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
                       type="button"
                       onClick={() => handleRemoveSkill(skill)}
                       className="ml-1 hover:text-red-600"
-                      disabled={createJob.isPending}
+                      disabled={updateJob.isPending}
                     >
                       <X className="h-3 w-3" />
                     </button>
@@ -232,17 +297,17 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
           </div>
           
           <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={onClose} disabled={createJob.isPending}>
+            <Button type="button" variant="outline" onClick={onClose} disabled={updateJob.isPending}>
               Cancel
             </Button>
-            <Button type="submit" disabled={createJob.isPending}>
-              {createJob.isPending ? (
+            <Button type="submit" disabled={updateJob.isPending}>
+              {updateJob.isPending ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Posting Job...
+                  Updating Job...
                 </>
               ) : (
-                'Post Job'
+                'Update Job'
               )}
             </Button>
           </div>
@@ -252,4 +317,4 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
   );
 };
 
-export default JobPostingModal;
+export default JobEditModal; 
