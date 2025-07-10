@@ -4,9 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { Loader2, Eye, EyeOff, User, Building2, Mail, Lock, UserPlus, LogIn } from 'lucide-react';
 import { apiClient } from '@/lib/api';
 
 interface AuthModalProps {
@@ -40,12 +41,31 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [companyLocation, setCompanyLocation] = useState('');
   const [companyFoundedYear, setCompanyFoundedYear] = useState(new Date().getFullYear());
 
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validatePassword = (password: string) => {
+    return password.length >= 6;
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!loginEmail || !loginPassword) {
       toast({
         title: "Missing information",
         description: "Please fill in all fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!validateEmail(loginEmail)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
         variant: "destructive",
       });
       return;
@@ -57,6 +77,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       onClose();
       setLoginEmail('');
       setLoginPassword('');
+      toast({
+        title: "Welcome back!",
+        description: "Successfully logged in to Jobsilo.",
+      });
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -66,6 +90,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!registerFirstName || !registerLastName || !registerEmail || !registerPassword) {
       toast({
         title: "Missing information",
@@ -75,9 +100,27 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       return;
     }
 
+    if (!validateEmail(registerEmail)) {
+      toast({
+        title: "Invalid email",
+        description: "Please enter a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!validatePassword(registerPassword)) {
+      toast({
+        title: "Weak password",
+        description: "Password must be at least 6 characters long.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsLoading(true);
     try {
-      const companyData = registerCompany ? {
+      const companyData = registerRole === 'recruiter' && registerCompany ? {
         name: registerCompany,
         description: companyDescription,
         website: companyWebsite,
@@ -96,6 +139,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         companyData
       );
       onClose();
+      
+      // Reset form
       setRegisterFirstName('');
       setRegisterLastName('');
       setRegisterEmail('');
@@ -108,6 +153,11 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       setCompanySize('medium');
       setCompanyLocation('');
       setCompanyFoundedYear(new Date().getFullYear());
+      
+      toast({
+        title: "Account created!",
+        description: `Welcome to Jobsilo, ${registerFirstName}!`,
+      });
     } catch (error) {
       // Error is handled in the auth context
     } finally {
@@ -115,25 +165,70 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     }
   };
 
+  const resetForm = () => {
+    setLoginEmail('');
+    setLoginPassword('');
+    setRegisterFirstName('');
+    setRegisterLastName('');
+    setRegisterEmail('');
+    setRegisterPassword('');
+    setRegisterRole('applicant');
+    setRegisterCompany('');
+    setCompanyDescription('');
+    setCompanyWebsite('');
+    setCompanyIndustry('');
+    setCompanySize('medium');
+    setCompanyLocation('');
+    setCompanyFoundedYear(new Date().getFullYear());
+  };
+
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md w-full max-w-[95vw] p-3 sm:p-6 lg:p-8 rounded-lg sm:rounded-xl shadow-lg bg-white/95 dark:bg-gray-900/95 overflow-y-auto max-h-[90vh] sm:max-h-[80vh] flex flex-col justify-center">
-        <DialogHeader>
-          <DialogTitle className="text-center text-xl sm:text-2xl lg:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
-            Welcome to Clever Hire
-          </DialogTitle>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      if (!open) {
+        resetForm();
+        onClose();
+      }
+    }}>
+      <DialogContent className="sm:max-w-md w-full max-w-[95vw] p-6 sm:p-8 rounded-xl shadow-2xl bg-white/95 backdrop-blur-sm border border-white/20 overflow-y-auto max-h-[90vh] sm:max-h-[85vh]">
+        <DialogHeader className="text-center mb-6">
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="p-2 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-lg">
+              <img src="/logo.svg" alt="Jobsilo" className="h-6 w-6" />
+            </div>
+            <DialogTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-[#FF7C23] to-[#2D3559] bg-clip-text text-transparent">
+              Welcome to Jobsilo
+            </DialogTitle>
+          </div>
+          <p className="text-sm text-[#2D3559] opacity-80">
+            Join thousands of professionals using AI-powered recruitment
+          </p>
         </DialogHeader>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-3 sm:mb-4">
-            <TabsTrigger value="login" className="text-sm sm:text-base lg:text-lg py-2 sm:py-3">Login</TabsTrigger>
-            <TabsTrigger value="register" className="text-sm sm:text-base lg:text-lg py-2 sm:py-3">Register</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-2 mb-6 bg-[#F3F8FF] p-1 rounded-lg">
+            <TabsTrigger 
+              value="login" 
+              className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:text-[#FF7C23] data-[state=active]:shadow-sm rounded-md py-2.5 px-4 text-sm font-medium transition-all duration-200"
+            >
+              <LogIn className="h-4 w-4" />
+              <span>Sign In</span>
+            </TabsTrigger>
+            <TabsTrigger 
+              value="register" 
+              className="flex items-center space-x-2 data-[state=active]:bg-white data-[state=active]:text-[#FF7C23] data-[state=active]:shadow-sm rounded-md py-2.5 px-4 text-sm font-medium transition-all duration-200"
+            >
+              <UserPlus className="h-4 w-4" />
+              <span>Sign Up</span>
+            </TabsTrigger>
           </TabsList>
           
-          <TabsContent value="login" className="space-y-3 sm:space-y-4">
-            <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
+          <TabsContent value="login" className="space-y-4">
+            <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="login-email" className="text-sm sm:text-base">Email</Label>
+                <Label htmlFor="login-email" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Mail className="h-4 w-4" />
+                  <span>Email Address</span>
+                </Label>
                 <Input
                   id="login-email"
                   type="email"
@@ -142,12 +237,15 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   onChange={(e) => setLoginEmail(e.target.value)}
                   disabled={isLoading}
                   required
-                  className="h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4"
+                  className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="login-password" className="text-sm sm:text-base">Password</Label>
+                <Label htmlFor="login-password" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Lock className="h-4 w-4" />
+                  <span>Password</span>
+                </Label>
                 <div className="relative">
                   <Input
                     id="login-password"
@@ -157,34 +255,41 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     onChange={(e) => setLoginPassword(e.target.value)}
                     disabled={isLoading}
                     required
-                    className="h-10 sm:h-12 text-sm sm:text-base px-3 sm:px-4 pr-10 sm:pr-12"
+                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm pr-10"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-2 sm:px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-[#2D3559] hover:text-[#FF7C23]"
                     onClick={() => setShowLoginPassword(!showLoginPassword)}
                     disabled={isLoading}
                     tabIndex={-1}
                   >
                     {showLoginPassword ? (
-                      <EyeOff className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-gray-500" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
               </div>
               
-              <Button type="submit" className="w-full h-10 sm:h-12 text-sm sm:text-base mt-2" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full h-11 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-200" 
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 sm:h-5 sm:w-5 animate-spin" />
-                    Logging in...
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Signing in...
                   </>
                 ) : (
-                  'Login'
+                  <>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Sign In
+                  </>
                 )}
               </Button>
             </form>
@@ -194,7 +299,10 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="register-first-name" className="text-base">First Name</Label>
+                  <Label htmlFor="register-first-name" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                    <User className="h-4 w-4" />
+                    <span>First Name</span>
+                  </Label>
                   <Input
                     id="register-first-name"
                     type="text"
@@ -203,12 +311,15 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     onChange={(e) => setRegisterFirstName(e.target.value)}
                     disabled={isLoading}
                     required
-                    className="h-12 text-base px-4"
+                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="register-last-name" className="text-base">Last Name</Label>
+                  <Label htmlFor="register-last-name" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                    <User className="h-4 w-4" />
+                    <span>Last Name</span>
+                  </Label>
                   <Input
                     id="register-last-name"
                     type="text"
@@ -217,13 +328,16 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     onChange={(e) => setRegisterLastName(e.target.value)}
                     disabled={isLoading}
                     required
-                    className="h-12 text-base px-4"
+                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                   />
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="register-email" className="text-base">Email</Label>
+                <Label htmlFor="register-email" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Mail className="h-4 w-4" />
+                  <span>Email Address</span>
+                </Label>
                 <Input
                   id="register-email"
                   type="email"
@@ -232,172 +346,180 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   onChange={(e) => setRegisterEmail(e.target.value)}
                   disabled={isLoading}
                   required
-                  className="h-12 text-base px-4"
+                  className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                 />
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="register-password" className="text-base">Password</Label>
+                <Label htmlFor="register-password" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Lock className="h-4 w-4" />
+                  <span>Password</span>
+                </Label>
                 <div className="relative">
                   <Input
                     id="register-password"
                     type={showRegisterPassword ? "text" : "password"}
-                    placeholder="Create a password"
+                    placeholder="Create a password (min. 6 characters)"
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
                     disabled={isLoading}
                     required
-                    className="h-12 text-base px-4 pr-12"
+                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm pr-10"
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-[#2D3559] hover:text-[#FF7C23]"
                     onClick={() => setShowRegisterPassword(!showRegisterPassword)}
                     disabled={isLoading}
                     tabIndex={-1}
                   >
                     {showRegisterPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-500" />
+                      <EyeOff className="h-4 w-4" />
                     ) : (
-                      <Eye className="h-5 w-5 text-gray-500" />
+                      <Eye className="h-4 w-4" />
                     )}
                   </Button>
                 </div>
               </div>
               
               <div className="space-y-2">
-                <Label htmlFor="register-role" className="text-base">I am a...</Label>
-                <select
-                  id="register-role"
-                  value={registerRole}
-                  onChange={(e) => setRegisterRole(e.target.value as 'recruiter' | 'applicant')}
-                  disabled={isLoading}
-                  className="w-full h-12 px-4 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  <option value="applicant">Job Seeker</option>
-                  <option value="recruiter">Recruiter</option>
-                </select>
+                <Label htmlFor="register-role" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <User className="h-4 w-4" />
+                  <span>I am a...</span>
+                </Label>
+                <Select value={registerRole} onValueChange={(value) => setRegisterRole(value as 'recruiter' | 'applicant')} disabled={isLoading}>
+                  <SelectTrigger className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm">
+                    <SelectValue placeholder="Select your role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="applicant">Job Seeker</SelectItem>
+                    <SelectItem value="recruiter">Recruiter</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               
               {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company" className="text-base">Company Name</Label>
-                  <Input
-                    id="register-company"
-                    type="text"
-                    placeholder="Enter your company name"
-                    value={registerCompany}
-                    onChange={(e) => setRegisterCompany(e.target.value)}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
+                <div className="space-y-4 p-4 bg-[#F3F8FF] rounded-lg border border-[#2D3559]/10">
+                  <div className="flex items-center space-x-2 mb-3">
+                    <Building2 className="h-4 w-4 text-[#FF7C23]" />
+                    <span className="text-sm font-medium text-[#222327]">Company Information</span>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-company" className="text-sm font-medium text-[#222327]">Company Name</Label>
+                    <Input
+                      id="register-company"
+                      type="text"
+                      placeholder="Enter your company name"
+                      value={registerCompany}
+                      onChange={(e) => setRegisterCompany(e.target.value)}
+                      disabled={isLoading}
+                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-company-description" className="text-sm font-medium text-[#222327]">Company Description</Label>
+                    <Input
+                      id="register-company-description"
+                      type="text"
+                      placeholder="Brief description of your company"
+                      value={companyDescription}
+                      onChange={(e) => setCompanyDescription(e.target.value)}
+                      disabled={isLoading}
+                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                    />
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-company-website" className="text-sm font-medium text-[#222327]">Website</Label>
+                      <Input
+                        id="register-company-website"
+                        type="url"
+                        placeholder="https://company.com"
+                        value={companyWebsite}
+                        onChange={(e) => setCompanyWebsite(e.target.value)}
+                        disabled={isLoading}
+                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-company-industry" className="text-sm font-medium text-[#222327]">Industry</Label>
+                      <Input
+                        id="register-company-industry"
+                        type="text"
+                        placeholder="e.g., Technology, Healthcare"
+                        value={companyIndustry}
+                        onChange={(e) => setCompanyIndustry(e.target.value)}
+                        disabled={isLoading}
+                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="register-company-size" className="text-sm font-medium text-[#222327]">Company Size</Label>
+                      <Select value={companySize} onValueChange={(value) => setCompanySize(value as 'small' | 'medium' | 'large')} disabled={isLoading}>
+                        <SelectTrigger className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm">
+                          <SelectValue placeholder="Select company size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="small">Small (1-50 employees)</SelectItem>
+                          <SelectItem value="medium">Medium (51-200 employees)</SelectItem>
+                          <SelectItem value="large">Large (200+ employees)</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label htmlFor="register-company-location" className="text-sm font-medium text-[#222327]">Location</Label>
+                      <Input
+                        id="register-company-location"
+                        type="text"
+                        placeholder="City, Country"
+                        value={companyLocation}
+                        onChange={(e) => setCompanyLocation(e.target.value)}
+                        disabled={isLoading}
+                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="register-company-founded-year" className="text-sm font-medium text-[#222327]">Founded Year</Label>
+                    <Input
+                      id="register-company-founded-year"
+                      type="number"
+                      placeholder="e.g., 2020"
+                      value={companyFoundedYear.toString()}
+                      onChange={(e) => setCompanyFoundedYear(Number(e.target.value))}
+                      disabled={isLoading}
+                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                    />
+                  </div>
                 </div>
               )}
               
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-description" className="text-base">Company Description</Label>
-                  <Input
-                    id="register-company-description"
-                    type="text"
-                    placeholder="Enter your company description"
-                    value={companyDescription}
-                    onChange={(e) => setCompanyDescription(e.target.value)}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
-                </div>
-              )}
-              
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-website" className="text-base">Company Website</Label>
-                  <Input
-                    id="register-company-website"
-                    type="text"
-                    placeholder="Enter your company website"
-                    value={companyWebsite}
-                    onChange={(e) => setCompanyWebsite(e.target.value)}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
-                </div>
-              )}
-              
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-industry" className="text-base">Company Industry</Label>
-                  <Input
-                    id="register-company-industry"
-                    type="text"
-                    placeholder="Enter your company industry"
-                    value={companyIndustry}
-                    onChange={(e) => setCompanyIndustry(e.target.value)}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
-                </div>
-              )}
-              
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-size" className="text-base">Company Size</Label>
-                  <select
-                    id="register-company-size"
-                    value={companySize}
-                    onChange={(e) => setCompanySize(e.target.value as 'small' | 'medium' | 'large')}
-                    disabled={isLoading}
-                    className="w-full h-12 px-4 text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    required
-                  >
-                    <option value="small">Small</option>
-                    <option value="medium">Medium</option>
-                    <option value="large">Large</option>
-                  </select>
-                </div>
-              )}
-              
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-location" className="text-base">Company Location</Label>
-                  <Input
-                    id="register-company-location"
-                    type="text"
-                    placeholder="Enter your company location"
-                    value={companyLocation}
-                    onChange={(e) => setCompanyLocation(e.target.value)}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
-                </div>
-              )}
-              
-              {registerRole === 'recruiter' && (
-                <div className="space-y-2">
-                  <Label htmlFor="register-company-founded-year" className="text-base">Company Founded Year</Label>
-                  <Input
-                    id="register-company-founded-year"
-                    type="text"
-                    placeholder="Enter your company founded year"
-                    value={companyFoundedYear.toString()}
-                    onChange={(e) => setCompanyFoundedYear(Number(e.target.value))}
-                    disabled={isLoading}
-                    className="h-12 text-base px-4"
-                  />
-                </div>
-              )}
-              
-              <Button type="submit" className="w-full h-12 text-base mt-2" disabled={isLoading}>
+              <Button 
+                type="submit" 
+                className="w-full h-11 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-200" 
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Creating account...
                   </>
                 ) : (
-                  'Create Account'
+                  <>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Create Account
+                  </>
                 )}
               </Button>
             </form>

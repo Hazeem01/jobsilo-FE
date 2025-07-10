@@ -38,18 +38,18 @@ class ErrorBoundary extends Component<Props, State> {
       }
 
       return (
-        <Card className="bg-red-50 border-red-200">
+        <Card className="bg-[#FF7C23]/10 border-[#FF7C23]/20">
           <CardHeader>
-            <CardTitle className="flex items-center space-x-2 text-red-800">
+            <CardTitle className="flex items-center space-x-2 text-[#FF7C23]">
               <AlertTriangle className="h-5 w-5" />
               <span>Something went wrong</span>
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-red-600 mb-4">
+            <p className="text-[#2D3559] mb-4">
               An unexpected error occurred. Please try refreshing the page.
             </p>
-            <Button onClick={this.handleRetry} variant="outline" className="text-red-600 border-red-300">
+            <Button onClick={this.handleRetry} variant="outline" className="text-[#FF7C23] border-[#FF7C23]/30 hover:bg-[#FF7C23] hover:text-white">
               <RefreshCw className="h-4 w-4 mr-2" />
               Try Again
             </Button>

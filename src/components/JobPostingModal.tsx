@@ -117,7 +117,7 @@ const JobPostingModal = ({ isOpen, onClose }: JobPostingModalProps) => {
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-[#FF7C23] to-[#2D3559] bg-clip-text text-transparent">
             Post New Job
           </DialogTitle>
         </DialogHeader>

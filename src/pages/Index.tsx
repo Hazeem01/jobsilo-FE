@@ -19,6 +19,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useJobs, useCandidates, useDashboardStats, useDeleteJob } from "@/hooks/use-api";
 import { useToast } from "@/hooks/use-toast";
 import type { Job } from "@/lib/api";
+import RoleBasedNavigation from "@/components/navigation/RoleBasedNavigation";
 
 const Index = () => {
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
@@ -93,70 +94,9 @@ const Index = () => {
   );
 
   return (
-    <div className="h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex flex-col overflow-hidden">
-      {/* Header */}
-      <header className="bg-white/80 backdrop-blur-md border-b border-white/20 flex-shrink-0 z-50">
-        <div className="w-full px-4 sm:px-6 py-3 sm:py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 sm:space-x-3">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1.5 sm:p-2 rounded-lg">
-                <Brain className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-              </div>
-              <h1 className="text-lg sm:text-xl lg:text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                Clever Hire
-              </h1>
-            </div>
-            
-            {/* Mobile Menu Button */}
-            <div className="flex items-center space-x-2 sm:hidden">
-              <Button
-                onClick={() => setIsJobModalOpen(true)}
-                size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="h-4 w-4" />
-              </Button>
-            </div>
-            
-            {/* Desktop Menu */}
-            <div className="hidden sm:flex items-center space-x-2 lg:space-x-4">
-              <Link to="/applicant">
-                <Button variant="outline" size="sm" className="hidden lg:flex">
-                  Job Seeker Portal
-                  <ArrowRight className="h-4 w-4 ml-2" />
-                </Button>
-              </Link>
-              
-              <div className="flex items-center space-x-2 lg:space-x-4">
-                <div className="hidden md:flex items-center space-x-2">
-                  <User className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {user?.firstName} {user?.lastName}
-                  </span>
-                  <Badge variant="secondary" className="text-xs">
-                    {user?.role}
-                  </Badge>
-                </div>
-                <Button
-                  onClick={() => setIsJobModalOpen(true)}
-                  size="sm"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
-                >
-                  <Plus className="h-4 w-4 mr-1 lg:mr-2" />
-                  <span className="hidden lg:inline">Post Job</span>
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                  <LogOut className="h-4 w-4 mr-1 lg:mr-2" />
-                  <span className="hidden lg:inline">Logout</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+    <div className="h-screen bg-gradient-to-br from-[#FF7C23] via-[#A3D958] to-[#2D3559] flex flex-col overflow-hidden">
+      {/* Role-based Navigation */}
+      <RoleBasedNavigation />
 
       {/* Main Content and Sidebar Container */}
       <div className="flex-1 flex overflow-hidden">
@@ -197,24 +137,24 @@ const Index = () => {
             <TabsContent value="jobs" className="space-y-4 sm:space-y-6">
               <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
                 <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#2D3559] h-4 w-4" />
                   <Input
                     placeholder="Search jobs..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10 bg-white/50 backdrop-blur-sm border-white/20 text-sm"
+                    className="pl-10 bg-white/50 backdrop-blur-sm border-white/20 text-sm focus:ring-[#2D3559] focus:border-[#2D3559]"
                   />
                 </div>
               </div>
               
               {jobsLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#FF7C23]"></div>
                 </div>
               ) : jobsError ? (
-                <Card className="bg-red-50 border-red-200">
+                <Card className="bg-[#FF7C23]/10 border-[#FF7C23]/30">
                   <CardContent className="pt-6">
-                    <p className="text-red-600">Failed to load jobs. Please try again.</p>
+                    <p className="text-[#FF7C23]">Failed to load jobs. Please try again.</p>
                   </CardContent>
                 </Card>
               ) : (
@@ -233,7 +173,7 @@ const Index = () => {
                   ) : (
                     <Card className="bg-white/60 backdrop-blur-sm border-white/20">
                       <CardContent className="pt-6">
-                        <p className="text-gray-500 text-center">
+                        <p className="text-[#2D3559] text-center">
                           {searchTerm ? "No jobs found matching your search." : "No jobs posted yet."}
                         </p>
                       </CardContent>
@@ -246,15 +186,15 @@ const Index = () => {
             {/* Candidates Tab */}
             <TabsContent value="candidates" className="space-y-4 sm:space-y-6">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between space-y-2 sm:space-y-0 flex-shrink-0">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900">Top Matched Candidates</h3>
-                <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs">
+                <h3 className="text-base sm:text-lg font-semibold text-[#222327]">Top Matched Candidates</h3>
+                <Badge variant="secondary" className="bg-[#A3D958]/10 text-[#A3D958] text-xs">
                   AI Powered Matching
                 </Badge>
               </div>
               
               {candidatesLoading ? (
                 <div className="flex items-center justify-center py-8">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2D3559]"></div>
                 </div>
               ) : candidatesError ? (
                 <Card className="bg-red-50 border-red-200">
@@ -273,7 +213,7 @@ const Index = () => {
                   ) : (
                     <Card className="bg-white/60 backdrop-blur-sm border-white/20">
                       <CardContent className="pt-6">
-                        <p className="text-gray-500 text-center">
+                        <p className="text-[#2D3559] text-center">
                           {searchTerm ? "No candidates found matching your search." : "No candidates available yet."}
                         </p>
                       </CardContent>
@@ -285,15 +225,15 @@ const Index = () => {
 
             {/* Interviews Tab */}
             <TabsContent value="interviews" className="space-y-6">
-              <Card className="bg-white/60 backdrop-blur-sm border-white/20">
+              <Card className="bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80 transition-all duration-300">
                 <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Calendar className="h-5 w-5" />
+                  <CardTitle className="flex items-center space-x-2 text-[#222327]">
+                    <Calendar className="h-5 w-5 text-[#FF7C23]" />
                     <span>Interview Management</span>
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-gray-600">
+                  <p className="text-[#2D3559]">
                     Schedule and manage interviews with candidates. This feature will be available soon.
                   </p>
                 </CardContent>
@@ -308,11 +248,11 @@ const Index = () => {
         <div className="h-full bg-white/60 backdrop-blur-sm overflow-hidden">
           <div className="p-4 border-b border-white/20 bg-white/40">
             <div className="flex items-center space-x-2">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-1.5 rounded-lg">
+              <div className="bg-gradient-to-r from-[#2D3559] to-[#FF7C23] p-1.5 rounded-lg">
                 <MessageSquare className="h-4 w-4 text-white" />
               </div>
-              <span className="font-semibold text-gray-900">AI Assistant</span>
-              <Badge variant="secondary" className="bg-green-100 text-green-800 text-xs ml-auto">
+              <span className="font-semibold text-[#222327]">AI Assistant</span>
+              <Badge variant="secondary" className="bg-[#A3D958]/10 text-[#A3D958] text-xs ml-auto">
                 Online
               </Badge>
             </div>

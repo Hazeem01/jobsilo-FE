@@ -31,11 +31,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Save the token to localStorage and set it in the API client
       apiClient.setToken(response.data.token);
       setUser(response.data.user);
+      console.log('🔐 Login successful - Token saved');
       toast({
         title: "Login successful",
         description: `Welcome back, ${response.data.user.firstName}!`,
       });
     } catch (error) {
+      console.error('🔐 Login failed:', error);
       toast({
         title: "Login failed",
         description: error instanceof Error ? error.message : "An error occurred during login",
@@ -58,11 +60,13 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       // Save the token to localStorage and set it in the API client
       apiClient.setToken(response.data.token);
       setUser(response.data.user);
+      console.log('🔐 Registration successful - Token saved');
       toast({
         title: "Registration successful",
-        description: `Welcome to Clever Hire, ${response.data.user.firstName}!`,
+        description: `Welcome to Jobsilo, ${response.data.user.firstName}!`,
       });
     } catch (error) {
+      console.error('🔐 Registration failed:', error);
       toast({
         title: "Registration failed",
         description: error instanceof Error ? error.message : "An error occurred during registration",
@@ -104,16 +108,24 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // Check if we have a token in localStorage
-      const token = localStorage.getItem('authToken');
-      if (token && apiClient.isAuthenticated()) {
+      // Check if we have a token in localStorage - use the same key as API client
+      const token = localStorage.getItem('auth_token');
+      console.log('🔐 Initializing auth - Token found:', !!token);
+      
+      if (token) {
+        // Set the token in the API client
+        apiClient.setToken(token);
         try {
           await refreshUser();
+          console.log('🔐 User refreshed successfully');
         } catch (error) {
+          console.error('🔐 Failed to refresh user:', error);
           // Token is invalid, clear it
           apiClient.clearToken();
           setUser(null);
         }
+      } else {
+        console.log('🔐 No token found in localStorage');
       }
       setIsLoading(false);
     };

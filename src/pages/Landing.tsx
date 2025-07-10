@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Brain, Users, Briefcase, FileText, MessageSquare, ArrowRight, CheckCircle } from "lucide-react";
 import { Link } from "react-router-dom";
 import { AuthModal } from "@/components/AuthModal";
-import { Navigation } from "@/components/Navigation";
+import RoleBasedNavigation from "@/components/navigation/RoleBasedNavigation";
 import { Helmet } from 'react-helmet-async';
 
 const Landing = () => {
@@ -15,7 +15,7 @@ const Landing = () => {
     {
       icon: Brain,
       title: "AI-Powered Matching",
-      description: "Intelligent candidate-job matching using advanced AI algorithms"
+      description: "Intelligent matching between candidates and job opportunities"
     },
     {
       icon: FileText,
@@ -25,52 +25,52 @@ const Landing = () => {
     {
       icon: MessageSquare,
       title: "AI Chat Assistant",
-      description: "Get recruitment insights and assistance from our AI"
+      description: "Get personalized insights and assistance from our AI"
     },
     {
       icon: Users,
-      title: "Candidate Management",
-      description: "Comprehensive candidate tracking and interview scheduling"
+      title: "Comprehensive Management",
+      description: "Complete candidate tracking and job application management"
     }
   ];
 
   const benefits = [
-    "Reduce hiring time by 60%",
-    "Improve candidate quality by 40%",
-    "Automated resume parsing and analysis",
-    "Real-time dashboard analytics",
-    "AI-powered interview scheduling",
-    "Professional document generation"
+    "Streamline your hiring or job search process",
+    "AI-powered matching and recommendations",
+    "Automated document generation and analysis",
+    "Real-time insights and analytics",
+    "Professional resume and cover letter creation",
+    "Smart interview scheduling and coordination"
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-[#FF7C23] to-[#2D3559]">
       {/* Header */}
-      <Navigation onLoginClick={() => setIsAuthModalOpen(true)} />
+      <RoleBasedNavigation onLoginClick={() => setIsAuthModalOpen(true)} />
 
       {/* Hero Section */}
       <section className="container mx-auto px-6 py-16">
         <div className="text-center max-w-4xl mx-auto">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
-            Revolutionize Your
-            <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Recruitment</span>
+          <h1 className="text-5xl font-bold text-[#222327] mb-6">
+            The Future of
+            <span className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] bg-clip-text text-transparent"> Hiring & Job Search</span>
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
-            AI-powered recruitment platform that connects recruiters with job seekers through 
-            intelligent matching, automated resume generation, and AI-driven insights.
+          <p className="text-xl text-[#2D3559] mb-8 max-w-2xl mx-auto">
+            AI-powered platform connecting recruiters, job seekers, and hiring managers through 
+            intelligent matching, automated document generation, and AI-driven insights.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link to="/dashboard">
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white">
+            <Link to="/recruiter/dashboard">
+              <Button size="lg" className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#e65a1a] hover:to-[#1a1f2e] text-white transition-all duration-300">
                 <Briefcase className="h-5 w-5 mr-2" />
-                Recruiter Dashboard
+                For Recruiters
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             </Link>
-            <Link to="/applicant">
-              <Button size="lg" variant="outline">
+            <Link to="/applicant/dashboard">
+              <Button size="lg" variant="outline" className="border-[#2D3559] text-[#2D3559] hover:bg-[#2D3559] hover:text-white transition-all duration-300">
                 <FileText className="h-5 w-5 mr-2" />
-                Job Seeker Portal
+                For Job Seekers
                 <ArrowRight className="h-5 w-5 ml-2" />
               </Button>
             </Link>
@@ -81,11 +81,11 @@ const Landing = () => {
       {/* Features Section */}
       <section className="container mx-auto px-6 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
-            Powerful Features for Modern Recruitment
+          <h2 className="text-3xl font-bold text-[#222327] mb-4">
+            Powerful Features for Everyone
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Everything you need to streamline your hiring process and find the perfect candidates.
+          <p className="text-lg text-[#2D3559] max-w-2xl mx-auto">
+            Whether you're hiring, job searching, or managing talent, we have the tools you need.
           </p>
         </div>
         
@@ -95,13 +95,13 @@ const Landing = () => {
             return (
               <Card key={index} className="bg-white/60 backdrop-blur-sm border-white/20 hover:bg-white/80 transition-all duration-300">
                 <CardHeader>
-                  <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-3 rounded-lg w-fit">
+                  <div className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] p-3 rounded-lg w-fit">
                     <IconComponent className="h-6 w-6 text-white" />
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                  <p className="text-gray-600">{feature.description}</p>
+                  <h3 className="text-lg font-semibold text-[#222327] mb-2">{feature.title}</h3>
+                  <p className="text-[#2D3559]">{feature.description}</p>
                 </CardContent>
               </Card>
             );
@@ -113,14 +113,14 @@ const Landing = () => {
       <section className="container mx-auto px-6 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Why Choose Clever Hire?
+            <h2 className="text-3xl font-bold text-[#222327] mb-6">
+              Why Choose Jobsilo?
             </h2>
             <div className="space-y-4">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center space-x-3">
-                  <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700">{benefit}</span>
+                  <CheckCircle className="h-5 w-5 text-[#A3D958] flex-shrink-0" />
+                  <span className="text-[#2D3559]">{benefit}</span>
                 </div>
               ))}
             </div>
@@ -128,16 +128,16 @@ const Landing = () => {
               <Button
                 onClick={() => setIsAuthModalOpen(true)}
                 size="lg"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#e65a1a] hover:to-[#1a1f2e] text-white transition-all duration-300"
               >
-                Start Free Trial
+                Get Started Free
               </Button>
             </div>
           </div>
           
-          <div className="bg-white/60 backdrop-blur-sm border-white/20 rounded-lg p-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">For Recruiters</h3>
-            <ul className="space-y-3 text-gray-600">
+          <div className="bg-white/60 backdrop-blur-sm border-white/20 rounded-lg p-8 hover:bg-white/80 transition-all duration-300">
+            <h3 className="text-xl font-semibold text-[#222327] mb-4">For Recruiters & Hiring Managers</h3>
+            <ul className="space-y-3 text-[#2D3559]">
               <li>• AI-powered candidate matching</li>
               <li>• Automated job posting and management</li>
               <li>• Real-time analytics and insights</li>
@@ -145,9 +145,9 @@ const Landing = () => {
               <li>• Advanced search and filtering</li>
             </ul>
             
-            <div className="mt-6 pt-6 border-t border-gray-200">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">For Job Seekers</h3>
-              <ul className="space-y-3 text-gray-600">
+            <div className="mt-6 pt-6 border-t border-[#2D3559]/30">
+              <h3 className="text-xl font-semibold text-[#222327] mb-4">For Job Seekers</h3>
+              <ul className="space-y-3 text-[#2D3559]">
                 <li>• AI-generated tailored resumes</li>
                 <li>• Personalized cover letters</li>
                 <li>• Job analysis and insights</li>
@@ -161,27 +161,22 @@ const Landing = () => {
 
       {/* CTA Section */}
       <section className="container mx-auto px-6 py-16">
-        <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white">
+        <div className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-2xl p-8 text-center text-white">
           <h2 className="text-3xl font-bold mb-4">
-            Ready to Transform Your Recruitment?
+            Ready to Transform Your Career Journey?
           </h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of recruiters and job seekers using Clever Hire
+            Join thousands of professionals using Jobsilo for smarter hiring and job searching
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button
               onClick={() => setIsAuthModalOpen(true)}
               size="lg"
               variant="secondary"
-              className="bg-white text-blue-600 hover:bg-gray-100"
+              className="bg-white text-[#FF7C23] hover:bg-[#F3F8FF] transition-all duration-300"
             >
               Get Started Now
             </Button>
-            <Link to="/applicant">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-blue-600">
-                Explore Job Portal
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -190,15 +185,13 @@ const Landing = () => {
       <footer className="bg-white/80 backdrop-blur-md border-t border-white/20 py-8">
         <div className="container mx-auto px-6 text-center">
           <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <h3 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Clever Hire
+            <img src="/logo.svg" alt="Jobsilo Logo" className="h-8 w-8" />
+            <h3 className="text-xl font-bold text-[#FF7C23]">
+              Jobsilo
             </h3>
           </div>
-          <p className="text-gray-600">
-            © 2024 Clever Hire. All rights reserved.
+          <p className="text-[#2D3559]">
+            © 2024 Jobsilo. All rights reserved.
           </p>
         </div>
       </footer>
@@ -210,10 +203,10 @@ const Landing = () => {
       />
 
       <Helmet>
-        <title>Clever Hire - Smart Recruitment Platform</title>
-        <meta name="description" content="Clever Hire is an AI-powered recruitment platform for smart hiring, candidate matching, and streamlined talent acquisition." />
-        <meta name="keywords" content="recruitment, hiring, AI, job matching, talent acquisition, HR, careers, Clever Hire, smart hiring, job platform" />
-        <link rel="canonical" href="https://cleverhire.com/" />
+        <title>Jobsilo - Smart Recruitment Platform</title>
+        <meta name="description" content="Jobsilo is an AI-powered recruitment platform for smart hiring, candidate matching, and streamlined talent acquisition." />
+        <meta name="keywords" content="recruitment, hiring, AI, job matching, talent acquisition, HR, careers, Jobsilo, smart hiring, job platform" />
+        <link rel="canonical" href="https://jobsilo.com/" />
       </Helmet>
     </div>
   );

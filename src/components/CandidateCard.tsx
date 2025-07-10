@@ -14,15 +14,15 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'hired':
-        return "text-green-600 bg-green-100";
+        return "text-[#A3D958] bg-[#A3D958] bg-opacity-10";
       case 'interviewed':
-        return "text-blue-600 bg-blue-100";
+        return "text-[#FF7C23] bg-[#FF7C23] bg-opacity-10";
       case 'reviewing':
-        return "text-yellow-600 bg-yellow-100";
+        return "text-[#2D3559] bg-[#2D3559] bg-opacity-10";
       case 'rejected':
-        return "text-red-600 bg-red-100";
+        return "text-[#222327] bg-[#222327] bg-opacity-10";
       default:
-        return "text-gray-600 bg-gray-100";
+        return "text-[#2D3559] bg-[#2D3559] bg-opacity-5";
     }
   };
 
@@ -35,7 +35,7 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
       <CardContent className="p-4 sm:p-6">
         <div className="flex items-start space-x-3 sm:space-x-4">
           <Avatar className="h-10 w-10 sm:h-12 sm:w-12 flex-shrink-0">
-            <AvatarFallback className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold text-sm sm:text-base">
+            <AvatarFallback className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] text-white font-semibold text-sm sm:text-base">
               {getInitials(candidate.name, 'U')}
             </AvatarFallback>
           </Avatar>
@@ -43,8 +43,8 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
           <div className="flex-1 min-w-0">
             <div className="flex items-start justify-between">
               <div className="flex-1 min-w-0">
-                <h3 className="text-base sm:text-lg font-semibold text-gray-900 truncate">{candidate.name || 'Unknown Candidate'}</h3>
-                <p className="text-sm text-gray-600 truncate">{candidate.email || 'No email provided'}</p>
+                <h3 className="text-base sm:text-lg font-semibold text-[#222327] truncate">{candidate.name || 'Unknown Candidate'}</h3>
+                <p className="text-sm text-[#2D3559] truncate">{candidate.email || 'No email provided'}</p>
               </div>
               
               <div className="flex items-center space-x-2 flex-shrink-0">
@@ -54,7 +54,7 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
               </div>
             </div>
             
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 mt-2 text-xs sm:text-sm text-gray-600">
+            <div className="flex flex-col sm:flex-row sm:items-center space-y-1 sm:space-y-0 sm:space-x-4 mt-2 text-xs sm:text-sm text-[#2D3559]">
               <div className="flex items-center space-x-1">
                 <Mail className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span className="truncate">{candidate.email || 'No email provided'}</span>
@@ -65,7 +65,7 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
               </div>
             </div>
             
-            <div className="flex items-center space-x-4 mt-2 text-xs sm:text-sm text-gray-600">
+            <div className="flex items-center space-x-4 mt-2 text-xs sm:text-sm text-[#2D3559]">
               <div className="flex items-center space-x-1">
                 <Briefcase className="h-3 w-3 sm:h-4 sm:w-4" />
                 <span>Applied {safeDateFormat(candidate.created_at, 'Date unknown')}</span>
@@ -78,7 +78,7 @@ const CandidateCard = ({ candidate }: CandidateCardProps) => {
               </Button>
               <Button 
                 size="sm"
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white text-xs"
+                className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white text-xs"
               >
                 Contact
               </Button>

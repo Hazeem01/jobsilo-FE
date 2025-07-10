@@ -2,9 +2,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { MapPin, DollarSign, Clock, Building, Calendar, Users, FileText } from "lucide-react";
+import { MapPin, DollarSign, Clock, Building, Calendar, Users, FileText, Send } from "lucide-react";
 import type { Job } from "@/lib/api";
 import { safeDateFormat } from "@/lib/utils";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface JobDetailsModalProps {
   job: Job | null;
@@ -12,6 +13,8 @@ interface JobDetailsModalProps {
   onClose: () => void;
   onEdit?: () => void;
   onDelete?: () => void;
+  onApply?: () => void;
+  showApplyButton?: boolean;
 }
 
 // Helper function to parse requirements JSON string
@@ -25,7 +28,9 @@ const parseRequirements = (requirements: string): string[] => {
   }
 };
 
-const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsModalProps) => {
+const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete, onApply, showApplyButton }: JobDetailsModalProps) => {
+  const { user } = useAuth();
+  
   if (!job) return null;
 
   const formatDate = (dateString: string) => {
@@ -34,11 +39,14 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
 
   const requirements = parseRequirements(job.requirements);
 
+  // Show apply button for applicants or when explicitly requested
+  const shouldShowApplyButton = showApplyButton || user?.role === 'applicant';
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+          <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-[#FF7C23] to-[#2D3559] bg-clip-text text-transparent">
             Job Details
           </DialogTitle>
         </DialogHeader>
@@ -48,8 +56,8 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
           <div className="space-y-4">
             <div className="flex items-start justify-between">
               <div className="flex-1">
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{job.title}</h2>
-                <div className="flex items-center space-x-4 text-sm text-gray-600">
+                <h2 className="text-2xl font-bold text-[#222327] mb-2">{job.title}</h2>
+                <div className="flex items-center space-x-4 text-sm text-[#2D3559]">
                   <div className="flex items-center space-x-1">
                     <Building className="h-4 w-4" />
                     <span>{job.company}</span>
@@ -73,13 +81,13 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
 
           {/* Key Information Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-gradient-to-r from-blue-50 to-blue-100 border-blue-200">
+            <Card className="bg-gradient-to-r from-[#FF7C23]/10 to-[#FF7C23]/5 border-[#FF7C23]/20">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-2">
-                  <DollarSign className="h-5 w-5 text-blue-600" />
+                  <DollarSign className="h-5 w-5 text-[#FF7C23]" />
                   <div>
-                    <p className="text-sm font-medium text-blue-900">Salary Range</p>
-                    <p className="text-lg font-semibold text-blue-800">
+                    <p className="text-sm font-medium text-[#222327]">Salary Range</p>
+                    <p className="text-lg font-semibold text-[#FF7C23]">
                       {job.salary_range || 'Not specified'}
                     </p>
                   </div>
@@ -87,13 +95,13 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-purple-50 to-purple-100 border-purple-200">
+            <Card className="bg-gradient-to-r from-[#2D3559]/10 to-[#2D3559]/5 border-[#2D3559]/20">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-2">
-                  <Clock className="h-5 w-5 text-purple-600" />
+                  <Clock className="h-5 w-5 text-[#2D3559]" />
                   <div>
-                    <p className="text-sm font-medium text-purple-900">Job Type</p>
-                    <p className="text-lg font-semibold text-purple-800">
+                    <p className="text-sm font-medium text-[#222327]">Job Type</p>
+                    <p className="text-lg font-semibold text-[#2D3559]">
                       {job.job_type ? job.job_type.charAt(0).toUpperCase() + job.job_type.slice(1) : 'Not specified'}
                     </p>
                   </div>
@@ -101,13 +109,13 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
               </CardContent>
             </Card>
 
-            <Card className="bg-gradient-to-r from-green-50 to-green-100 border-green-200">
+            <Card className="bg-gradient-to-r from-[#A3D958]/10 to-[#A3D958]/5 border-[#A3D958]/20">
               <CardContent className="p-4">
                 <div className="flex items-center space-x-2">
-                  <Calendar className="h-5 w-5 text-green-600" />
+                  <Calendar className="h-5 w-5 text-[#A3D958]" />
                   <div>
-                    <p className="text-sm font-medium text-green-900">Posted</p>
-                    <p className="text-lg font-semibold text-green-800">
+                    <p className="text-sm font-medium text-[#222327]">Posted</p>
+                    <p className="text-lg font-semibold text-[#A3D958]">
                       {formatDate(job.created_at)}
                     </p>
                   </div>
@@ -120,11 +128,11 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
           <Card className="bg-white/60 backdrop-blur-sm border-white/20">
             <CardContent className="p-6">
               <div className="flex items-center space-x-2 mb-4">
-                <FileText className="h-5 w-5 text-gray-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Job Description</h3>
+                <FileText className="h-5 w-5 text-[#2D3559]" />
+                <h3 className="text-lg font-semibold text-[#222327]">Job Description</h3>
               </div>
               <div className="prose prose-sm max-w-none">
-                <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+                <p className="text-[#2D3559] leading-relaxed whitespace-pre-wrap">
                   {job.description}
                 </p>
               </div>
@@ -136,8 +144,8 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
             <Card className="bg-white/60 backdrop-blur-sm border-white/20">
               <CardContent className="p-6">
                 <div className="flex items-center space-x-2 mb-4">
-                  <Users className="h-5 w-5 text-gray-600" />
-                  <h3 className="text-lg font-semibold text-gray-900">Required Skills</h3>
+                  <Users className="h-5 w-5 text-[#2D3559]" />
+                  <h3 className="text-lg font-semibold text-[#222327]">Required Skills</h3>
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {requirements.map((requirement) => (
@@ -153,37 +161,46 @@ const JobDetailsModal = ({ job, isOpen, onClose, onEdit, onDelete }: JobDetailsM
           {/* Additional Information */}
           <Card className="bg-white/60 backdrop-blur-sm border-white/20">
             <CardContent className="p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Additional Information</h3>
+              <h3 className="text-lg font-semibold text-[#222327] mb-4">Additional Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
-                  <p className="font-medium text-gray-700">Job ID</p>
-                  <p className="text-gray-600 font-mono">{job.id}</p>
+                  <p className="font-medium text-[#2D3559]">Job ID</p>
+                  <p className="text-[#222327] font-mono">{job.id}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-700">Last Updated</p>
-                  <p className="text-gray-600">{formatDate(job.updated_at)}</p>
+                  <p className="font-medium text-[#2D3559]">Last Updated</p>
+                  <p className="text-[#222327]">{formatDate(job.updated_at)}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-700">Recruiter ID</p>
-                  <p className="text-gray-600 font-mono">{job.recruiter_id}</p>
+                  <p className="font-medium text-[#2D3559]">Recruiter ID</p>
+                  <p className="text-[#222327] font-mono">{job.recruiter_id}</p>
                 </div>
                 <div>
-                  <p className="font-medium text-gray-700">Company ID</p>
-                  <p className="text-gray-600">{job.company_id || 'Not assigned'}</p>
+                  <p className="font-medium text-[#2D3559]">Company ID</p>
+                  <p className="text-[#222327]">{job.company_id || 'Not assigned'}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-4 border-t border-gray-200">
-            <Button variant="outline" onClick={onClose}>
+          <div className="flex justify-end space-x-3 pt-4 border-t border-[#2D3559]/20">
+            <Button variant="outline" onClick={onClose} className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
               Close
             </Button>
+            {shouldShowApplyButton && onApply && (
+              <Button 
+                onClick={onApply}
+                className="bg-gradient-to-r from-[#A3D958] to-[#2D3559] hover:from-[#A3D958] hover:to-[#FF7C23] text-white"
+              >
+                <Send className="h-4 w-4 mr-2" />
+                Apply Now
+              </Button>
+            )}
             {onEdit && (
               <Button 
                 onClick={onEdit}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white"
+                className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white"
               >
                 Edit Job
               </Button>

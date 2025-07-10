@@ -1,4 +1,4 @@
-# AI Recruiter - Enhanced Application
+# Jobsilo - AI Recruiter
 
 A modern, AI-powered recruitment platform that connects recruiters with job seekers through intelligent matching, automated resume generation, and AI-driven insights.
 
@@ -99,7 +99,7 @@ A modern, AI-powered recruitment platform that connects recruiters with job seek
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd clever-hire-compass-1
+   cd jobsilo
    ```
 
 2. **Install dependencies**

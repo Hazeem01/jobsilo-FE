@@ -15,32 +15,32 @@ const DashboardStats = ({ stats, isLoading }: DashboardStatsProps) => {
       value: "0",
       change: "No data",
       icon: Briefcase,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100"
+      color: "text-[#FF7C23]",
+      bgColor: "bg-[#FF7C23]/10"
     },
     {
       title: "Total Candidates",
       value: "0",
       change: "No data",
       icon: Users,
-      color: "text-green-600",
-      bgColor: "bg-green-100"
+      color: "text-[#2D3559]",
+      bgColor: "bg-[#2D3559]/10"
     },
     {
       title: "Upcoming Interviews",
       value: "0",
       change: "No data",
       icon: Calendar,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
+      color: "text-[#A3D958]",
+      bgColor: "bg-[#A3D958]/10"
     },
     {
       title: "Recent Candidates",
       value: "0",
       change: "No data",
       icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100"
+      color: "text-[#222327]",
+      bgColor: "bg-[#222327]/10"
     }
   ];
 
@@ -50,32 +50,32 @@ const DashboardStats = ({ stats, isLoading }: DashboardStatsProps) => {
       value: safeNumberFormat(stats.activeJobs, '0'),
       change: `${safeNumberFormat(stats.totalJobs, '0')} total jobs`,
       icon: Briefcase,
-      color: "text-blue-600",
-      bgColor: "bg-blue-100"
+      color: "text-[#FF7C23]",
+      bgColor: "bg-[#FF7C23]/10"
     },
     {
       title: "Total Candidates",
       value: safeNumberFormat(stats.totalCandidates, '0'),
       change: `${safeNumberFormat(stats.interviewsScheduled, '0')} interviews scheduled`,
       icon: Users,
-      color: "text-green-600",
-      bgColor: "bg-green-100"
+      color: "text-[#2D3559]",
+      bgColor: "bg-[#2D3559]/10"
     },
     {
       title: "Interviews Scheduled",
       value: safeNumberFormat(stats.interviewsScheduled, '0'),
       change: `${safeNumberFormat(stats.hiresThisMonth, '0')} hires this month`,
       icon: Calendar,
-      color: "text-purple-600",
-      bgColor: "bg-purple-100"
+      color: "text-[#A3D958]",
+      bgColor: "bg-[#A3D958]/10"
     },
     {
       title: "Average Time to Hire",
       value: `${safeNumberFormat(stats.averageTimeToHire, '0')} days`,
       change: "Last 30 days",
       icon: TrendingUp,
-      color: "text-orange-600",
-      bgColor: "bg-orange-100"
+      color: "text-[#222327]",
+      bgColor: "bg-[#222327]/10"
     }
   ] : defaultStats;
 
@@ -87,11 +87,11 @@ const DashboardStats = ({ stats, isLoading }: DashboardStatsProps) => {
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div className="space-y-2 flex-1">
-                  <div className="h-3 sm:h-4 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-6 sm:h-8 bg-gray-200 rounded animate-pulse"></div>
-                  <div className="h-2 sm:h-3 bg-gray-200 rounded animate-pulse"></div>
+                  <div className="h-3 sm:h-4 bg-[#F3F8FF] rounded animate-pulse"></div>
+                  <div className="h-6 sm:h-8 bg-[#F3F8FF] rounded animate-pulse"></div>
+                  <div className="h-2 sm:h-3 bg-[#F3F8FF] rounded animate-pulse"></div>
                 </div>
-                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gray-200 rounded-full animate-pulse"></div>
+                <div className="w-8 h-8 sm:w-12 sm:h-12 bg-[#F3F8FF] rounded-full animate-pulse"></div>
               </div>
             </CardContent>
           </Card>
@@ -109,9 +109,9 @@ const DashboardStats = ({ stats, isLoading }: DashboardStatsProps) => {
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-xs sm:text-sm font-medium text-gray-600">{stat.title}</p>
-                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mt-1 sm:mt-2">{stat.value}</p>
-                  <p className="text-xs text-gray-500 mt-1">{stat.change}</p>
+                  <p className="text-xs sm:text-sm font-medium text-[#2D3559]">{stat.title}</p>
+                  <p className="text-xl sm:text-2xl lg:text-3xl font-bold text-[#222327] mt-1 sm:mt-2">{stat.value}</p>
+                  <p className="text-xs text-[#2D3559] mt-1">{stat.change}</p>
                 </div>
                 <div className={`p-2 sm:p-3 rounded-full ${stat.bgColor}`}>
                   <IconComponent className={`h-4 w-4 sm:h-6 sm:w-6 ${stat.color}`} />

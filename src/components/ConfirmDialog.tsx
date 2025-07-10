@@ -39,16 +39,16 @@ const ConfirmDialog = ({
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center space-x-2">
-            <AlertTriangle className="h-5 w-5 text-red-600" />
+            <AlertTriangle className="h-5 w-5 text-[#FF7C23]" />
             <span>{title}</span>
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-gray-600">
+          <AlertDialogDescription className="text-[#2D3559]">
             {description}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel asChild>
-            <Button variant="outline" disabled={isLoading}>
+            <Button variant="outline" disabled={isLoading} className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
               {cancelText}
             </Button>
           </AlertDialogCancel>
@@ -57,6 +57,7 @@ const ConfirmDialog = ({
               variant={variant} 
               onClick={onConfirm}
               disabled={isLoading}
+              className={variant === "destructive" ? "bg-[#FF7C23] hover:bg-[#FF7C23]/90" : ""}
             >
               {isLoading ? "Processing..." : confirmText}
             </Button>

@@ -1,8 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api';
-import type {
-  ProSignupData
-} from '@/lib/api';
 
 // Dashboard Queries
 export const useDashboardStats = () => {
@@ -113,7 +110,7 @@ export const useUpdateCandidateStatus = () => {
   });
 };
 
-// Applicant Features
+// Applicant Features - Updated to match BE team endpoints
 export const useUploadResume = () => {
   return useMutation({
     mutationFn: ({ file, type }: { 
@@ -169,7 +166,7 @@ export const useExportResume = () => {
     mutationFn: ({ content, type, format }: { 
       content: string; 
       type?: 'resume' | 'cover_letter';
-      format?: 'A4';
+      format?: 'A4' | 'Letter';
     }) => apiClient.exportResume(content, type, format),
   });
 };
@@ -198,7 +195,7 @@ export const useApplicantInterviews = (params?: {
   });
 };
 
-// Applicant job application hooks
+// Updated Applicant Job Application hooks
 export const useApplyToJob = () => {
   const queryClient = useQueryClient();
   
@@ -210,7 +207,6 @@ export const useApplyToJob = () => {
     }) => apiClient.applyToJob(applicationData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['applicant', 'applications'] });
-      queryClient.invalidateQueries({ queryKey: ['jobs'] });
     },
   });
 };
@@ -226,8 +222,6 @@ export const useMyApplications = (params?: {
     staleTime: 2 * 60 * 1000, // 2 minutes
   });
 };
-
-
 
 // Chat Features
 export const useChatHistory = (params?: {
@@ -265,20 +259,25 @@ export const useChatSuggestions = (context?: string) => {
 
 // File Management
 export const useUploadFile = () => {
+  const queryClient = useQueryClient();
+  
   return useMutation({
     mutationFn: ({ file, type, description }: { 
       file: File; 
       type: 'resume' | 'cover_letter' | 'document';
       description?: string;
     }) => apiClient.uploadFile(file, type, description),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['files'] });
+    },
   });
 };
 
 export const useFileInfo = (id: string) => {
   return useQuery({
-    queryKey: ['files', id],
+    queryKey: ['files', 'info', id],
     queryFn: () => apiClient.getFileInfo(id),
-    enabled: !!id,
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -300,7 +299,7 @@ export const useDeleteFile = () => {
   return useMutation({
     mutationFn: (id: string) => apiClient.deleteFile(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['files', 'user'] });
+      queryClient.invalidateQueries({ queryKey: ['files'] });
     },
   });
 };
@@ -315,15 +314,15 @@ export const useCompanies = (params?: {
   return useQuery({
     queryKey: ['companies', params],
     queryFn: () => apiClient.getCompanies(params),
-    staleTime: 5 * 60 * 1000, // 5 minutes
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 };
 
 export const useCompany = (id: string) => {
   return useQuery({
-    queryKey: ['companies', id],
+    queryKey: ['companies', 'detail', id],
     queryFn: () => apiClient.getCompany(id),
-    enabled: !!id,
+    staleTime: 10 * 60 * 1000, // 10 minutes
   });
 };
 
@@ -331,9 +330,20 @@ export const useUpdateCompany = () => {
   const queryClient = useQueryClient();
   
   return useMutation({
-    mutationFn: ({ id, data }: { id: string; data: Partial<any> }) =>
-      apiClient.updateCompany(id, data),
-    onSuccess: () => {
+    mutationFn: ({ id, data }: { 
+      id: string; 
+      data: Partial<{
+        name: string;
+        description: string;
+        website: string;
+        industry: string;
+        size: 'small' | 'medium' | 'large';
+        location: string;
+        foundedYear: number;
+      }>;
+    }) => apiClient.updateCompany(id, data),
+    onSuccess: (_, { id }) => {
+      queryClient.invalidateQueries({ queryKey: ['companies', 'detail', id] });
       queryClient.invalidateQueries({ queryKey: ['companies'] });
     },
   });
@@ -345,10 +355,9 @@ export const useCompanyUsers = (id: string, params?: {
   limit?: number;
 }) => {
   return useQuery({
-    queryKey: ['companies', id, 'users', params],
+    queryKey: ['companies', 'users', id, params],
     queryFn: () => apiClient.getCompanyUsers(id, params),
-    enabled: !!id,
-    staleTime: 2 * 60 * 1000, // 2 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -360,7 +369,7 @@ export const useApiAnalytics = (params?: {
   return useQuery({
     queryKey: ['analytics', 'api', params],
     queryFn: () => apiClient.getApiAnalytics(params),
-    staleTime: 10 * 60 * 1000, // 10 minutes
+    staleTime: 5 * 60 * 1000, // 5 minutes
   });
 };
 
@@ -380,12 +389,12 @@ export const useHealthAnalytics = () => {
   });
 };
 
-// System
+// System Health
 export const useHealthCheck = () => {
   return useQuery({
     queryKey: ['health'],
     queryFn: () => apiClient.healthCheck(),
-    staleTime: 30 * 1000, // 30 seconds
+    staleTime: 1 * 60 * 1000, // 1 minute
   });
 };
 
@@ -393,6 +402,6 @@ export const useApiInfo = () => {
   return useQuery({
     queryKey: ['api', 'info'],
     queryFn: () => apiClient.getApiInfo(),
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 30 * 60 * 1000, // 30 minutes
   });
 }; 

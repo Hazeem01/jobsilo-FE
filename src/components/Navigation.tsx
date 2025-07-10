@@ -21,11 +21,9 @@ export const Navigation = ({ onLoginClick, onLogoutClick }: NavigationProps) => 
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-3">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg">
-              <Brain className="h-6 w-6 text-white" />
-            </div>
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-              Clever Hire
+            <img src="/logo.svg" alt="Jobsilo Logo" className="h-8 w-8" />
+            <h1 className="text-2xl font-bold text-[#FF7C23]">
+              Jobsilo
             </h1>
           </Link>
           
@@ -33,27 +31,27 @@ export const Navigation = ({ onLoginClick, onLogoutClick }: NavigationProps) => 
             {isAuthenticated ? (
               <>
                 <div className="flex items-center space-x-2">
-                  <User className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
-                    {user?.name}
+                  <User className="h-4 w-4 text-[#2D3559]" />
+                  <span className="text-sm font-medium text-[#222327]">
+                    {user?.firstName}
                   </span>
                 </div>
                 
                 {user?.role === 'recruiter' && (
                   <Link to="/dashboard">
-                    <Button variant="outline">
+                    <Button variant="outline" className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
                       Dashboard
                     </Button>
                   </Link>
                 )}
                 
                 <Link to="/applicant">
-                  <Button variant="outline">
+                  <Button variant="outline" className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
                     Job Portal
                   </Button>
                 </Link>
                 
-                <Button variant="outline" onClick={handleLogout}>
+                <Button variant="outline" onClick={handleLogout} className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
                 </Button>
@@ -61,12 +59,12 @@ export const Navigation = ({ onLoginClick, onLogoutClick }: NavigationProps) => 
             ) : (
               <>
                 <Link to="/applicant">
-                  <Button variant="outline">
+                  <Button variant="outline" className="border-[#2D3559]/20 text-[#2D3559] hover:bg-[#2D3559] hover:text-white">
                     Job Seeker Portal
                   </Button>
                 </Link>
                 
-                <Button onClick={onLoginClick}>
+                <Button onClick={onLoginClick} className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white">
                   <User className="h-4 w-4 mr-2" />
                   Sign In
                 </Button>

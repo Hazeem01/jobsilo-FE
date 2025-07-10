@@ -2,8 +2,8 @@
 export const config = {
   // API Configuration
   api: {
-    // baseUrl: (import.meta as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1',
-    baseUrl: (import.meta as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || 'https://ai-recruiter-backend-qq29.onrender.com/api/v1',
+    baseUrl: (import.meta as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || 'http://localhost:3001/api/v1',
+    // baseUrl: (import.meta as { env?: { VITE_API_BASE_URL?: string } }).env?.VITE_API_BASE_URL || 'https://ai-recruiter-backend-qq29.onrender.com/api/v1',
     timeout: 30000, // 30 seconds
   },
   

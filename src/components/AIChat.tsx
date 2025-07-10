@@ -49,8 +49,12 @@ const AIChat = () => {
   }, []);
 
   useEffect(() => {
-    if (chatHistoryResponse?.data?.conversations?.[0]?.length > 0) {
-      setMessages(chatHistoryResponse.data.conversations[0]);
+    if (chatHistoryResponse?.data?.conversations) {
+      // Flatten all arrays of messages into a single array
+      const allMessages = chatHistoryResponse.data.conversations.flat();
+      if (allMessages.length > 0) {
+        setMessages(allMessages);
+      }
     }
   }, [chatHistoryResponse]);
 
@@ -87,16 +91,16 @@ const AIChat = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="h-full flex flex-col bg-gradient-to-br from-blue-50/50 to-purple-50/50">
+      <div className="h-full flex flex-col bg-gradient-to-br from-[#FF7C23]/10 to-[#2D3559]/10">
         {/* Header */}
         <div className="flex-shrink-0 p-4 border-b border-white/20 bg-white/30 backdrop-blur-sm">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+            <div className="p-2 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-lg">
               <Brain className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">AI Assistant</h2>
-              <p className="text-xs text-gray-600">Your recruitment companion</p>
+              <h2 className="text-lg font-semibold text-[#222327]">AI Assistant</h2>
+              <p className="text-xs text-[#2D3559]">Your recruitment companion</p>
             </div>
           </div>
         </div>
@@ -105,7 +109,7 @@ const AIChat = () => {
         <div className="flex-1 flex flex-col justify-center items-center p-6">
           <div className="text-center space-y-4 max-w-sm">
             <div className="relative">
-              <div className="p-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full w-16 h-16 mx-auto flex items-center justify-center">
+              <div className="p-4 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-full w-16 h-16 mx-auto flex items-center justify-center">
                 <Bot className="h-8 w-8 text-white" />
               </div>
               <div className="absolute -top-1 -right-1 p-1 bg-yellow-400 rounded-full">
@@ -113,13 +117,13 @@ const AIChat = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-semibold text-gray-900">Sign in to chat with AI</h3>
-              <p className="text-sm text-gray-600 leading-relaxed">
+              <h3 className="text-xl font-semibold text-[#222327]">Sign in to chat with AI</h3>
+              <p className="text-sm text-[#2D3559] leading-relaxed">
                 Get personalized recruitment assistance, candidate insights, and hiring recommendations powered by AI
               </p>
             </div>
             <div className="pt-2">
-              <div className="flex items-center justify-center space-x-4 text-xs text-gray-500">
+              <div className="flex items-center justify-center space-x-4 text-xs text-[#2D3559]">
                 <div className="flex items-center space-x-1">
                   <MessageSquare className="h-3 w-3" />
                   <span>Smart conversations</span>
@@ -137,24 +141,24 @@ const AIChat = () => {
   }
 
   return (
-    <div className="h-full flex flex-col bg-gradient-to-br from-blue-50/50 to-purple-50/50">
+    <div className="h-full flex flex-col bg-gradient-to-br from-[#FF7C23]/10 to-[#2D3559]/10">
       {/* Header */}
       <div className="flex-shrink-0 p-4 border-b border-white/20 bg-white/30 backdrop-blur-sm">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg">
+            <div className="p-2 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-lg">
               <Brain className="h-5 w-5 text-white" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-gray-900">AI Assistant</h2>
-              <p className="text-xs text-gray-600">
+              <h2 className="text-lg font-semibold text-[#222327]">AI Assistant</h2>
+              <p className="text-xs text-[#2D3559]">
                 {messages.length > 0 ? `${messages.length} messages` : "Ready to help"}
               </p>
             </div>
           </div>
           <div className="flex items-center space-x-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span className="text-xs text-gray-600">Online</span>
+            <div className="w-2 h-2 bg-[#A3D958] rounded-full animate-pulse"></div>
+            <span className="text-xs text-[#2D3559]">Online</span>
           </div>
         </div>
       </div>
@@ -165,15 +169,15 @@ const AIChat = () => {
           {historyLoading ? (
             <div className="flex items-center justify-center py-8">
               <div className="text-center space-y-3">
-                <Loader2 className="h-6 w-6 animate-spin text-blue-600 mx-auto" />
-                <p className="text-sm text-gray-600">Loading conversation...</p>
+                <Loader2 className="h-6 w-6 animate-spin text-[#FF7C23] mx-auto" />
+                <p className="text-sm text-[#2D3559]">Loading conversation...</p>
               </div>
             </div>
           ) : messages.length === 0 ? (
             <div className="text-center py-8">
               <div className="space-y-4">
                 <div className="relative mx-auto w-16 h-16">
-                  <div className="p-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full w-full h-full flex items-center justify-center">
+                  <div className="p-3 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] rounded-full w-full h-full flex items-center justify-center">
                     <Bot className="h-8 w-8 text-white" />
                   </div>
                   <div className="absolute -top-1 -right-1 p-1 bg-yellow-400 rounded-full">
@@ -181,8 +185,8 @@ const AIChat = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-lg font-semibold text-gray-900">Welcome to AI Assistant</h3>
-                  <p className="text-sm text-gray-600 max-w-sm mx-auto leading-relaxed">
+                  <h3 className="text-lg font-semibold text-[#222327]">Welcome to AI Assistant</h3>
+                  <p className="text-sm text-[#2D3559] max-w-sm mx-auto leading-relaxed">
                     I'm here to help with your recruitment needs. Ask me about candidates, job postings, hiring strategies, or anything recruitment-related.
                   </p>
                 </div>
@@ -219,8 +223,8 @@ const AIChat = () => {
                 <div
                   className={`max-w-[85%] sm:max-w-[80%] p-3 sm:p-4 rounded-2xl ${
                     message.role === "user"
-                      ? "bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg"
-                      : "bg-white/80 backdrop-blur-sm text-gray-900 border border-white/20 shadow-sm"
+                      ? "bg-gradient-to-r from-[#FF7C23] to-[#2D3559] text-white shadow-lg"
+                      : "bg-white/80 backdrop-blur-sm text-[#222327] border border-white/20 shadow-sm"
                   }`}
                 >
                   <p className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</p>
@@ -237,7 +241,7 @@ const AIChat = () => {
           
           {sendMessage.isPending && (
             <div className="flex justify-start">
-              <div className="bg-white/80 backdrop-blur-sm text-gray-900 max-w-[85%] sm:max-w-[80%] p-3 sm:p-4 rounded-2xl border border-white/20 shadow-sm">
+              <div className="bg-white/80 backdrop-blur-sm text-[#222327] max-w-[85%] sm:max-w-[80%] p-3 sm:p-4 rounded-2xl border border-white/20 shadow-sm">
                 <div className="flex items-center space-x-3">
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
@@ -296,14 +300,14 @@ const AIChat = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
-            className="flex-1 bg-white/60 backdrop-blur-sm border-white/20 text-sm rounded-xl focus:ring-2 focus:ring-blue-500/20"
+            className="flex-1 bg-white/60 backdrop-blur-sm border-white/20 text-sm rounded-xl focus:ring-2 focus:ring-[#FF7C23]/20"
             disabled={sendMessage.isPending}
           />
           <Button
             onClick={handleSendMessage}
             size="sm"
             disabled={sendMessage.isPending || !inputValue.trim()}
-            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-xl px-4 shadow-lg hover:shadow-xl transition-all duration-200"
+            className="bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white rounded-xl px-4 shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {sendMessage.isPending ? (
               <Loader2 className="h-4 w-4 animate-spin" />

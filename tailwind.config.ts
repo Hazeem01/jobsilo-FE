@@ -19,39 +19,25 @@ export default {
 		},
 		extend: {
 			colors: {
+				background: '#F3F8FF',
+				foreground: 'hsl(var(--foreground))',
+				card: 'hsl(var(--card))',
+				'card-foreground': 'hsl(var(--card-foreground))',
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
+				primary: '#FF7C23',
+				'primary-foreground': 'hsl(var(--primary-foreground))',
+				secondary: '#2D3559',
+				'secondary-foreground': 'hsl(var(--secondary-foreground))',
+				accent: '#A3D958',
+				'accent-foreground': 'hsl(var(--accent-foreground))',
+				destructive: 'hsl(var(--destructive))',
+				'destructive-foreground': 'hsl(var(--destructive-foreground))',
 				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
-				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))'
-				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))'
-				},
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))'
-				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))'
-				},
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))'
-				},
-				popover: {
-					DEFAULT: 'hsl(var(--popover))',
-					foreground: 'hsl(var(--popover-foreground))'
-				},
-				card: {
-					DEFAULT: 'hsl(var(--card))',
-					foreground: 'hsl(var(--card-foreground))'
-				},
+				muted: 'hsl(var(--muted))',
+				'muted-foreground': 'hsl(var(--muted-foreground))',
+				popover: 'hsl(var(--popover))',
+				'popover-foreground': 'hsl(var(--popover-foreground))',
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',
@@ -61,7 +47,9 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
-				}
+				},
+				charcoal: '#222327',
+				white: '#FFFFFF',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

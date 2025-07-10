@@ -1,8 +1,8 @@
 import config from '@/config';
 
 // API Configuration
-const API_BASE_URL = 'https://ai-recruiter-backend-qq29.onrender.com/api/v1';
-// const API_BASE_URL = 'http://localhost:3001/api/v1';
+// const API_BASE_URL = 'https://ai-recruiter-backend-qq29.onrender.com/api/v1';
+const API_BASE_URL = 'http://localhost:3001/api/v1';
 
 // Types
 export interface User {
@@ -80,12 +80,15 @@ export interface ParsedResume {
     contact: {
       name: string;
       email: string;
-      phone?: string;
+      phone: string;
+      location?: string;
     };
+    summary?: string;
     experience: Array<{
       title: string;
       company: string;
       duration: string;
+      location?: string;
       description: string;
     }>;
     education: Array<{
@@ -94,6 +97,11 @@ export interface ParsedResume {
       year: string;
     }>;
     skills: string[];
+    projects?: Array<{
+      name: string;
+      description: string;
+      technologies?: string[];
+    }>;
   };
 }
 
@@ -130,15 +138,8 @@ export interface ResumeParseResponse {
 export interface JobAnalysisResponse {
   success: boolean;
   data: {
-    analysis: {
-      keySkills: string[];
-      experienceLevel: string;
-      industry: string;
-      salaryRange: string;
-      growthOpportunities: string[];
-      requiredQualifications: string[];
-      preferredQualifications: string[];
-    };
+    analysis: string;
+    originalContent?: string;
   };
 }
 
@@ -146,6 +147,11 @@ export interface GeneratedContent {
   content: string;
   type: string;
   model: string;
+  suggestions?: string[];
+  metadata?: {
+    wordCount: number;
+    [key: string]: any;
+  };
 }
 
 export interface GeneratedDocumentResponse {
@@ -198,11 +204,11 @@ export interface FileInfo {
   filename: string;
   file_path: string;
   file_url: string;
-  file_size: number;
+  fileSize: number;
   mime_type: string;
   type: 'resume' | 'cover_letter' | 'document';
   description?: string;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface FileUploadResponse {
@@ -317,6 +323,48 @@ export interface ApiInfoResponse {
   };
 }
 
+// Application interfaces for the new endpoints
+export interface Application {
+  id: string;
+  status: 'applied' | 'reviewing' | 'interviewing' | 'offered' | 'rejected';
+  appliedAt: string;
+  updatedAt: string;
+  resumeUrl?: string;
+  coverLetterUrl?: string;
+  job: {
+    id: string;
+    title: string;
+    company: string;
+    location: string;
+    jobType: string;
+    salaryRange: string;
+    status: string;
+  };
+}
+
+export interface ApplicationsResponse {
+  success: boolean;
+  data: {
+    applications: Application[];
+    pagination: Pagination;
+  };
+}
+
+export interface ApplicationResponse {
+  success: boolean;
+  data: {
+    applicationId: string;
+    status: string;
+    appliedAt: string;
+    job: {
+      id: string;
+      title: string;
+      company: string;
+      location: string;
+    };
+  };
+}
+
 class ApiClient {
   private baseUrl: string;
   private token: string | null = null;
@@ -324,7 +372,12 @@ class ApiClient {
   constructor(baseUrl: string) {
     this.baseUrl = baseUrl;
     // Load token from localStorage on initialization
-    this.token = localStorage.getItem('authToken');
+    if (typeof window !== 'undefined') {
+      const savedToken = localStorage.getItem('auth_token');
+      if (savedToken) {
+        this.token = savedToken;
+      }
+    }
   }
 
   private async request<T>(
@@ -333,11 +386,14 @@ class ApiClient {
   ): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const headers: HeadersInit = {
-      'Content-Type': 'application/json',
       ...options.headers,
     };
 
-    // Add Authorization header if token exists
+    // Only set Content-Type if not already set (for file uploads)
+    if (!headers['Content-Type'] && !(options.body instanceof FormData)) {
+      headers['Content-Type'] = 'application/json';
+    }
+
     if (this.token) {
       headers['Authorization'] = `Bearer ${this.token}`;
     }
@@ -357,12 +413,13 @@ class ApiClient {
 
       return data;
     } catch (error) {
-      console.error('API request failed:', error);
-      throw error;
+      if (error instanceof Error) {
+        throw new Error(`API Error: ${error.message}`);
+      }
+      throw new Error('An unexpected error occurred');
     }
   }
 
-  // Authentication Methods
   async register(
     email: string, 
     password: string, 
@@ -371,21 +428,16 @@ class ApiClient {
     role: 'recruiter' | 'applicant' = 'applicant',
     company?: Company
   ): Promise<AuthResponse> {
-    const payload: any = {
-      email,
-      password,
-      firstName,
-      lastName,
-      role,
-    };
-
-    if (role === 'recruiter' && company) {
-      payload.company = company;
-    }
-
     return this.request<AuthResponse>('/auth/register', {
       method: 'POST',
-      body: JSON.stringify(payload),
+      body: JSON.stringify({
+        email,
+        password,
+        firstName,
+        lastName,
+        role,
+        company,
+      }),
     });
   }
 
@@ -406,7 +458,6 @@ class ApiClient {
     return this.request<{ success: boolean; data: { user: User } }>('/auth/me');
   }
 
-  // Dashboard Methods
   async getDashboardStats(): Promise<{ success: boolean; data: DashboardStats }> {
     return this.request<{ success: boolean; data: DashboardStats }>('/dashboard/stats');
   }
@@ -424,7 +475,7 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/dashboard/jobs${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/dashboard/jobs?${queryString}` : '/dashboard/jobs';
     
     return this.request<JobsResponse>(endpoint);
   }
@@ -438,7 +489,7 @@ class ApiClient {
     salary?: string;
     status?: 'active' | 'draft' | 'closed';
   }): Promise<{ success: boolean; data: Job }> {
-    return this.request<{ success: boolean; data: Job }>('/dashboard/jobs', {
+    return this.request<{ success: boolean; data: Job }>('/jobs', {
       method: 'POST',
       body: JSON.stringify(jobData),
     });
@@ -453,14 +504,14 @@ class ApiClient {
     type?: 'full-time' | 'part-time' | 'contract' | 'internship';
     status?: 'active' | 'draft' | 'closed';
   }): Promise<{ success: boolean; data: Job }> {
-    return this.request<{ success: boolean; data: Job }>(`/dashboard/jobs/${id}`, {
+    return this.request<{ success: boolean; data: Job }>(`/jobs/${id}`, {
       method: 'PUT',
       body: JSON.stringify(jobData),
     });
   }
 
   async deleteJob(id: string): Promise<{ success: boolean; data: { message: string } }> {
-    return this.request<{ success: boolean; data: { message: string } }>(`/dashboard/jobs/${id}`, {
+    return this.request<{ success: boolean; data: { message: string } }>(`/jobs/${id}`, {
       method: 'DELETE',
     });
   }
@@ -480,7 +531,7 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/dashboard/candidates${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/candidates?${queryString}` : '/candidates';
     
     return this.request<CandidatesResponse>(endpoint);
   }
@@ -490,23 +541,20 @@ class ApiClient {
     notes?: string;
     rating?: number;
   }): Promise<{ success: boolean; data: Candidate }> {
-    return this.request<{ success: boolean; data: Candidate }>(`/dashboard/candidates/${id}`, {
+    return this.request<{ success: boolean; data: Candidate }>(`/candidates/${id}/status`, {
       method: 'PUT',
       body: JSON.stringify(data),
     });
   }
 
-  // Applicant Methods
+  // Updated Applicant Endpoints to match BE team specifications
   async uploadResume(file: File, type: 'resume' | 'cover_letter' = 'resume'): Promise<ResumeUploadResponse> {
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append('resume', file);
     formData.append('type', type);
 
     return this.request<ResumeUploadResponse>('/applicant/resumes/upload', {
       method: 'POST',
-      headers: {
-        // Remove Content-Type to let browser set it with boundary
-      },
       body: formData,
     });
   }
@@ -556,11 +604,26 @@ class ApiClient {
     });
   }
 
-  async exportResume(content: string, type: 'resume' | 'cover_letter' = 'resume', format: 'A4' = 'A4'): Promise<PdfExportResponse> {
-    return this.request<PdfExportResponse>('/applicant/export/resume', {
+  async exportResume(content: string, type: 'resume' | 'cover_letter' = 'resume', format: 'A4' | 'Letter' = 'A4'): Promise<Blob> {
+    const url = `${this.baseUrl}/applicant/export/resume`;
+    const response = await fetch(url, {
       method: 'POST',
-      body: JSON.stringify({ content, type, format }),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${this.token}`,
+      },
+      body: JSON.stringify({
+        content,
+        type,
+        format,
+      }),
     });
+
+    if (!response.ok) {
+      throw new Error(`Failed to export resume: ${response.statusText}`);
+    }
+
+    return response.blob();
   }
 
   async getInterviews(params?: {
@@ -574,7 +637,7 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/applicant/interviews${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/applicant/interviews?${queryString}` : '/applicant/interviews';
     
     return this.request<{ success: boolean; data: { interviews: Interview[]; pagination: Pagination } }>(endpoint);
   }
@@ -586,45 +649,19 @@ class ApiClient {
     company: string;
     role: 'applicant';
   }): Promise<{ success: boolean; data: { message: string } }> {
-    return this.request<{ success: boolean; data: { message: string } }>('/applicant/pro/signup', {
+    return this.request<{ success: boolean; data: { message: string } }>('/applicant/pro-signup', {
       method: 'POST',
       body: JSON.stringify(data),
     });
   }
 
-  // Applicant job application methods
+  // New Applicant Endpoints matching BE team specifications
   async applyToJob(applicationData: {
     jobId: string;
     resumeUrl?: string;
     coverLetterUrl?: string;
-  }): Promise<{ 
-    success: boolean; 
-    data: {
-      applicationId: string;
-      status: string;
-      appliedAt: string;
-      job: {
-        id: string;
-        title: string;
-        company: string;
-        location: string;
-      };
-    };
-  }> {
-    return this.request<{ 
-      success: boolean; 
-      data: {
-        applicationId: string;
-        status: string;
-        appliedAt: string;
-        job: {
-          id: string;
-          title: string;
-          company: string;
-          location: string;
-        };
-      };
-    }>('/applicant/applications', {
+  }): Promise<ApplicationResponse> {
+    return this.request<ApplicationResponse>('/applicant/applications', {
       method: 'POST',
       body: JSON.stringify(applicationData),
     });
@@ -634,63 +671,18 @@ class ApiClient {
     status?: 'applied' | 'reviewing' | 'interviewing' | 'offered' | 'rejected';
     page?: number;
     limit?: number;
-  }): Promise<{ 
-    success: boolean; 
-    data: {
-      applications: Array<{
-        id: string;
-        status: string;
-        appliedAt: string;
-        updatedAt: string;
-        resumeUrl?: string;
-        coverLetterUrl?: string;
-        job: {
-          id: string;
-          title: string;
-          company: string;
-          location: string;
-          jobType: string;
-          salaryRange: string;
-          status: string;
-        };
-      }>;
-      pagination: Pagination;
-    };
-  }> {
+  }): Promise<ApplicationsResponse> {
     const searchParams = new URLSearchParams();
     if (params?.status) searchParams.append('status', params.status);
     if (params?.page) searchParams.append('page', params.page.toString());
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/applicant/applications${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/applicant/applications?${queryString}` : '/applicant/applications';
     
-    return this.request<{ 
-      success: boolean; 
-      data: {
-        applications: Array<{
-          id: string;
-          status: string;
-          appliedAt: string;
-          updatedAt: string;
-          resumeUrl?: string;
-          coverLetterUrl?: string;
-          job: {
-            id: string;
-            title: string;
-            company: string;
-            location: string;
-            jobType: string;
-            salaryRange: string;
-            status: string;
-          };
-        }>;
-        pagination: Pagination;
-      };
-    }>(endpoint);
+    return this.request<ApplicationsResponse>(endpoint);
   }
 
-  // Chat Methods
   async sendChatMessage(message: string, context?: string): Promise<ChatResponse> {
     return this.request<ChatResponse>('/chat/message', {
       method: 'POST',
@@ -707,7 +699,7 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/chat/history${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/chat/history?${queryString}` : '/chat/history';
     
     return this.request<ChatHistoryResponse>(endpoint);
   }
@@ -717,12 +709,11 @@ class ApiClient {
     if (context) searchParams.append('context', context);
 
     const queryString = searchParams.toString();
-    const endpoint = `/chat/suggestions${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/chat/suggestions?${queryString}` : '/chat/suggestions';
     
     return this.request<ChatSuggestionsResponse>(endpoint);
   }
 
-  // File Management Methods
   async uploadFile(file: File, type: 'resume' | 'cover_letter' | 'document', description?: string): Promise<FileUploadResponse> {
     const formData = new FormData();
     formData.append('file', file);
@@ -731,9 +722,6 @@ class ApiClient {
 
     return this.request<FileUploadResponse>('/files/upload', {
       method: 'POST',
-      headers: {
-        // Remove Content-Type to let browser set it with boundary
-      },
       body: formData,
     });
   }
@@ -744,16 +732,14 @@ class ApiClient {
 
   async downloadFile(id: string): Promise<Blob> {
     const url = `${this.baseUrl}/files/${id}/download`;
-    const headers: HeadersInit = {};
-    
-    if (this.token) {
-      headers['Authorization'] = `Bearer ${this.token}`;
-    }
+    const response = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${this.token}`,
+      },
+    });
 
-    const response = await fetch(url, { headers });
-    
     if (!response.ok) {
-      throw new Error(`Download failed: ${response.statusText}`);
+      throw new Error(`Failed to download file: ${response.statusText}`);
     }
 
     return response.blob();
@@ -776,12 +762,11 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/files/user/files${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/files/user/files?${queryString}` : '/files/user/files';
     
     return this.request<UserFilesResponse>(endpoint);
   }
 
-  // Company Management Methods
   async getCompanies(params?: {
     search?: string;
     industry?: string;
@@ -795,7 +780,7 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/companies${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/companies?${queryString}` : '/companies';
     
     return this.request<{ success: boolean; data: { companies: Company[]; pagination: Pagination } }>(endpoint);
   }
@@ -822,12 +807,11 @@ class ApiClient {
     if (params?.limit) searchParams.append('limit', params.limit.toString());
 
     const queryString = searchParams.toString();
-    const endpoint = `/companies/${id}/users${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/companies/${id}/users?${queryString}` : `/companies/${id}/users`;
     
     return this.request<{ success: boolean; data: { users: User[]; pagination: Pagination } }>(endpoint);
   }
 
-  // Analytics Methods
   async getApiAnalytics(params?: {
     period?: 'day' | 'week' | 'month';
     endpoint?: string;
@@ -837,7 +821,7 @@ class ApiClient {
     if (params?.endpoint) searchParams.append('endpoint', params.endpoint);
 
     const queryString = searchParams.toString();
-    const endpoint = `/analytics/api${queryString ? `?${queryString}` : ''}`;
+    const endpoint = queryString ? `/analytics?${queryString}` : '/analytics';
     
     return this.request<AnalyticsResponse>(endpoint);
   }
@@ -850,26 +834,28 @@ class ApiClient {
     return this.request<{ success: boolean; data: any }>('/analytics/health');
   }
 
-  // System Methods
   async healthCheck(): Promise<HealthResponse> {
     return this.request<HealthResponse>('/health');
   }
 
   async getApiInfo(): Promise<ApiInfoResponse> {
-    return this.request<ApiInfoResponse>('/');
+    return this.request<ApiInfoResponse>('/info');
   }
 
-  // Token Management
   setToken(token: string): void {
     this.token = token;
-    localStorage.setItem('authToken', token);
-    console.log('🔐 Token saved:', token ? 'Present' : 'Missing');
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('auth_token', token);
+      console.log('🔐 Token saved to localStorage');
+    }
   }
 
   clearToken(): void {
     this.token = null;
-    localStorage.removeItem('authToken');
-    console.log('🔐 Token cleared');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('auth_token');
+      console.log('🔐 Token cleared from localStorage');
+    }
   }
 
   isAuthenticated(): boolean {
@@ -883,8 +869,17 @@ class ApiClient {
   hasValidToken(): boolean {
     return !!this.token;
   }
+
+  // Debug method to check token status
+  debugTokenStatus(): void {
+    const localStorageToken = typeof window !== 'undefined' ? localStorage.getItem('auth_token') : null;
+    console.log('🔐 Token Debug Info:', {
+      memoryToken: this.token ? 'Present' : 'Missing',
+      localStorageToken: localStorageToken ? 'Present' : 'Missing',
+      isAuthenticated: this.isAuthenticated(),
+      tokenMatch: this.token === localStorageToken
+    });
+  }
 }
 
-// Create and export the API client instance
-export const apiClient = new ApiClient(API_BASE_URL);
-export default apiClient; 
+export const apiClient = new ApiClient(API_BASE_URL); 
