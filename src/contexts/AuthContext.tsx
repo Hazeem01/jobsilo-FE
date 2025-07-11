@@ -6,8 +6,8 @@ interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, firstName: string, lastName: string, role?: 'recruiter' | 'applicant', company?: Company) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
+  register: (email: string, password: string, firstName: string, lastName: string, role?: 'recruiter' | 'applicant', company?: Company) => Promise<User>;
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
 }
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const isAuthenticated = !!user;
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<User> => {
     try {
       const response = await apiClient.login(email, password);
       // Save the token to localStorage and set it in the API client
@@ -36,6 +36,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         title: "Login successful",
         description: `Welcome back, ${response.data.user.firstName}!`,
       });
+      return response.data.user;
     } catch (error) {
       console.error('🔐 Login failed:', error);
       toast({
@@ -54,7 +55,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     lastName: string, 
     role: 'recruiter' | 'applicant' = 'applicant',
     company?: Company
-  ) => {
+  ): Promise<User> => {
     try {
       const response = await apiClient.register(email, password, firstName, lastName, role, company);
       // Save the token to localStorage and set it in the API client
@@ -65,6 +66,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         title: "Registration successful",
         description: `Welcome to Jobsilo, ${response.data.user.firstName}!`,
       });
+      return response.data.user;
     } catch (error) {
       console.error('🔐 Registration failed:', error);
       toast({

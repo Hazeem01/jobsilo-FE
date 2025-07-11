@@ -93,7 +93,6 @@ const ApplicantDashboard = () => {
   const [email, setEmail] = useState("");
   const [generatedResume, setGeneratedResume] = useState("");
   const [generatedCoverLetter, setGeneratedCoverLetter] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
   const [selectedTemplate, setSelectedTemplate] = useState("Software Engineer");
   const [resumePreferences, setResumePreferences] = useState({
     tone: "professional" as "professional" | "creative" | "minimalist",
@@ -110,21 +109,13 @@ const ApplicantDashboard = () => {
       version: number;
     }>
   >([]);
-  const [showTemplates, setShowTemplates] = useState(false);
-  const [showAIEnhancements, setShowAIEnhancements] = useState(false);
-  const [documentNotes, setDocumentNotes] = useState("");
-  const [collaborationMode, setCollaborationMode] = useState(false);
   const [activeTab, setActiveTab] = useState("overview");
 
   const { toast } = useToast();
   const { user } = useAuth();
 
   // API hooks
-  const uploadResume = useUploadResume();
-  const parseResume = useParseResume();
-  const analyzeJob = useAnalyzeJob();
   const generateResume = useGenerateResume();
-  const generateCoverLetter = useGenerateCoverLetter();
   const exportResume = useExportResume();
   const proSignup = useProSignup();
   const deleteFile = useDeleteFile();
@@ -225,7 +216,7 @@ const ApplicantDashboard = () => {
 
     try {
       const result = await generateResume.mutateAsync({
-        currentResume: workHistory,
+        resume: workHistory,
         jobDescription: jobDescription,
         preferences: resumePreferences,
       });

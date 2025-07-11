@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Users, Briefcase, Brain, MessageSquare, Calendar, Search, Plus, ArrowRight, LogOut, User } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import JobPostingModal from "@/components/JobPostingModal";
 import JobDetailsModal from "@/components/JobDetailsModal";
 import JobEditModal from "@/components/JobEditModal";
@@ -21,7 +21,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { Job } from "@/lib/api";
 import RoleBasedNavigation from "@/components/navigation/RoleBasedNavigation";
 
-const Index = () => {
+const RecruiterDashboard = () => {
   const [isJobModalOpen, setIsJobModalOpen] = useState(false);
   const [selectedJob, setSelectedJob] = useState<Job | null>(null);
   const [isDetailsModalOpen, setIsDetailsModalOpen] = useState(false);
@@ -31,6 +31,7 @@ const Index = () => {
   const { user, logout } = useAuth();
   const { toast } = useToast();
   const deleteJob = useDeleteJob();
+  const navigate = useNavigate();
   
   // API hooks
   const { data: jobsResponse, isLoading: jobsLoading, error: jobsError } = useJobs();
@@ -44,6 +45,7 @@ const Index = () => {
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   // Job management handlers
@@ -317,4 +319,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default RecruiterDashboard;

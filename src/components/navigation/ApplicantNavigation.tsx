@@ -1,21 +1,23 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Brain, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const ApplicantNavigation = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   return (
     <header className="bg-white/70 backdrop-blur-md border-b border-white/20 sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
-        <Link to="/applicant/dashboard" className="flex items-center space-x-3">
+        <Link to="/" className="flex items-center space-x-3">
           <img src="/logo.svg" alt="Jobsilo Logo" className="h-8 w-8" />
           <span className="text-xl font-bold text-[#FF7C23]">
             Jobsilo

@@ -1,6 +1,6 @@
 # Jobsilo - AI Recruiter
 
-A modern, AI-powered recruitment platform that connects recruiters with job seekers through intelligent matching, automated resume generation, and AI-driven insights.
+A modern, AI-Powered Recruitment & Job Application Platform that connects recruiters with job seekers through intelligent matching, automated resume generation, and AI-driven insights.
 
 ## 🚀 Features
 
@@ -37,56 +37,6 @@ A modern, AI-powered recruitment platform that connects recruiters with job seek
 - **React Query** for server state management
 - **React Router** for navigation
 - **Lucide React** for icons
-
-### Backend Integration
-- **RESTful API** with comprehensive endpoints
-- **JWT Authentication** for secure user sessions
-- **File Upload** support for resumes and documents
-- **AI Integration** for document generation and analysis
-
-## 📋 API Endpoints
-
-### Authentication
-- `POST /api/v1/auth/register` - User registration
-- `POST /api/v1/auth/login` - User login
-- `POST /api/v1/auth/logout` - User logout
-- `GET /api/v1/auth/me` - Get current user
-
-### Recruiter Dashboard
-- `GET /api/v1/dashboard/stats` - Dashboard metrics
-- `GET /api/v1/dashboard/jobs` - List all jobs
-- `POST /api/v1/dashboard/jobs` - Create new job posting
-- `PUT /api/v1/dashboard/jobs/:id` - Update job posting
-- `DELETE /api/v1/dashboard/jobs/:id` - Delete job posting
-- `GET /api/v1/dashboard/candidates` - List candidates
-- `GET /api/v1/dashboard/candidates/:id` - Get candidate details
-
-### Applicant Features
-- `POST /api/v1/applicant/resumes/upload` - Upload resume file
-- `POST /api/v1/applicant/resumes/parse` - Parse resume text
-- `POST /api/v1/applicant/ai/analyze-job` - Analyze job posting
-- `POST /api/v1/applicant/ai/generate-resume` - Generate tailored resume
-- `POST /api/v1/applicant/ai/generate-cover-letter` - Generate cover letter
-- `POST /api/v1/applicant/export/resume` - Export resume as PDF
-- `POST /api/v1/applicant/export/cover-letter` - Export cover letter as PDF
-- `POST /api/v1/applicant/pro/signup` - Pro version signup
-
-### Interview Management
-- `GET /api/v1/applicant/interviews` - List interviews
-- `POST /api/v1/applicant/interviews` - Schedule interview
-
-### AI Chat
-- `POST /api/v1/chat/message` - Send message to AI
-- `GET /api/v1/chat/history` - Get chat history
-- `DELETE /api/v1/chat/history` - Clear chat history
-- `GET /api/v1/chat/suggestions` - Get chat suggestions
-
-### File Management
-- `POST /api/v1/files/upload` - Upload file
-- `GET /api/v1/files/:id` - Get file information
-- `GET /api/v1/files/:id/download` - Download file
-- `DELETE /api/v1/files/:id` - Delete file
-- `GET /api/v1/files/user/files` - Get user's files
 
 ## 🚀 Getting Started
 

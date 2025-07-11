@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff, User, Building2, Mail, Lock, UserPlus, LogIn } from 'lucide-react';
-import { apiClient } from '@/lib/api';
+import { useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -18,8 +18,9 @@ interface AuthModalProps {
 export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('login');
-  const { login, register } = useAuth();
+  const { login, register, user } = useAuth();
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   // Login form state
   const [loginEmail, setLoginEmail] = useState('');
@@ -50,6 +51,24 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
     return password.length >= 6;
   };
 
+  const redirectToDashboard = (role: string) => {
+    switch (role) {
+      case 'recruiter':
+        navigate('/recruiter/dashboard');
+        break;
+      case 'applicant':
+        navigate('/applicant/dashboard');
+        break;
+      case 'admin':
+        navigate('/admin/dashboard');
+        break;
+      default:
+        navigate('/');
+    }
+  };
+
+
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -73,10 +92,14 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
 
     setIsLoading(true);
     try {
-      await login(loginEmail, loginPassword);
+      const user = await login(loginEmail, loginPassword);
       onClose();
       setLoginEmail('');
       setLoginPassword('');
+      
+      // Redirect based on user role
+      redirectToDashboard(user.role);
+      
       toast({
         title: "Welcome back!",
         description: "Successfully logged in to Jobsilo.",
@@ -130,7 +153,7 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
         foundedYear: companyFoundedYear
       } : undefined;
 
-      await register(
+      const user = await register(
         registerEmail, 
         registerPassword, 
         registerFirstName, 
@@ -153,6 +176,9 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
       setCompanySize('medium');
       setCompanyLocation('');
       setCompanyFoundedYear(new Date().getFullYear());
+      
+      // Redirect based on user role
+      redirectToDashboard(user.role);
       
       toast({
         title: "Account created!",
@@ -235,9 +261,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   placeholder="Enter your email"
                   value={loginEmail}
                   onChange={(e) => setLoginEmail(e.target.value)}
-                  disabled={isLoading}
+                  className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                   required
-                  className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                 />
               </div>
               
@@ -253,41 +278,32 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     placeholder="Enter your password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    disabled={isLoading}
+                    className="pr-10 focus:ring-[#2D3559] focus:border-[#2D3559]"
                     required
-                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm pr-10"
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-[#2D3559] hover:text-[#FF7C23]"
                     onClick={() => setShowLoginPassword(!showLoginPassword)}
-                    disabled={isLoading}
-                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2D3559] hover:text-[#FF7C23] transition-colors"
                   >
-                    {showLoginPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
+                    {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
               
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-200" 
+                className="w-full bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#e65a1a] hover:to-[#1a1f2e] text-white transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Signing in...
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Signing In...
                   </>
                 ) : (
                   <>
-                    <LogIn className="mr-2 h-4 w-4" />
+                    <LogIn className="h-4 w-4 mr-2" />
                     Sign In
                   </>
                 )}
@@ -297,38 +313,36 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
           
           <TabsContent value="register" className="space-y-4">
             <form onSubmit={handleRegister} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="register-first-name" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Label htmlFor="register-firstname" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
                     <User className="h-4 w-4" />
                     <span>First Name</span>
                   </Label>
                   <Input
-                    id="register-first-name"
+                    id="register-firstname"
                     type="text"
                     placeholder="First name"
                     value={registerFirstName}
                     onChange={(e) => setRegisterFirstName(e.target.value)}
-                    disabled={isLoading}
+                    className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                     required
-                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <Label htmlFor="register-last-name" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
+                  <Label htmlFor="register-lastname" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
                     <User className="h-4 w-4" />
                     <span>Last Name</span>
                   </Label>
                   <Input
-                    id="register-last-name"
+                    id="register-lastname"
                     type="text"
                     placeholder="Last name"
                     value={registerLastName}
                     onChange={(e) => setRegisterLastName(e.target.value)}
-                    disabled={isLoading}
+                    className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                     required
-                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                   />
                 </div>
               </div>
@@ -344,9 +358,8 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   placeholder="Enter your email"
                   value={registerEmail}
                   onChange={(e) => setRegisterEmail(e.target.value)}
-                  disabled={isLoading}
+                  className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                   required
-                  className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
                 />
               </div>
               
@@ -359,114 +372,121 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                   <Input
                     id="register-password"
                     type={showRegisterPassword ? "text" : "password"}
-                    placeholder="Create a password (min. 6 characters)"
+                    placeholder="Create a password"
                     value={registerPassword}
                     onChange={(e) => setRegisterPassword(e.target.value)}
-                    disabled={isLoading}
+                    className="pr-10 focus:ring-[#2D3559] focus:border-[#2D3559]"
                     required
-                    className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm pr-10"
                   />
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="absolute right-0 top-0 h-full px-3 hover:bg-transparent text-[#2D3559] hover:text-[#FF7C23]"
                     onClick={() => setShowRegisterPassword(!showRegisterPassword)}
-                    disabled={isLoading}
-                    tabIndex={-1}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#2D3559] hover:text-[#FF7C23] transition-colors"
                   >
-                    {showRegisterPassword ? (
-                      <EyeOff className="h-4 w-4" />
-                    ) : (
-                      <Eye className="h-4 w-4" />
-                    )}
-                  </Button>
+                    {showRegisterPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                  </button>
                 </div>
               </div>
               
               <div className="space-y-2">
                 <Label htmlFor="register-role" className="text-sm font-medium text-[#222327] flex items-center space-x-2">
                   <User className="h-4 w-4" />
-                  <span>I am a...</span>
+                  <span>I am a</span>
                 </Label>
-                <Select value={registerRole} onValueChange={(value) => setRegisterRole(value as 'recruiter' | 'applicant')} disabled={isLoading}>
-                  <SelectTrigger className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm">
+                <Select value={registerRole} onValueChange={(value: 'recruiter' | 'applicant') => setRegisterRole(value)}>
+                  <SelectTrigger className="focus:ring-[#2D3559] focus:border-[#2D3559]">
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="applicant">Job Seeker</SelectItem>
-                    <SelectItem value="recruiter">Recruiter</SelectItem>
+                    <SelectItem value="applicant">
+                      <div className="flex items-center space-x-2">
+                        <User className="h-4 w-4" />
+                        <span>Job Seeker</span>
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="recruiter">
+                      <div className="flex items-center space-x-2">
+                        <Building2 className="h-4 w-4" />
+                        <span>Recruiter/Hiring Manager</span>
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               
               {registerRole === 'recruiter' && (
-                <div className="space-y-4 p-4 bg-[#F3F8FF] rounded-lg border border-[#2D3559]/10">
-                  <div className="flex items-center space-x-2 mb-3">
-                    <Building2 className="h-4 w-4 text-[#FF7C23]" />
-                    <span className="text-sm font-medium text-[#222327]">Company Information</span>
-                  </div>
+                <div className="space-y-4 p-4 bg-[#F3F8FF] rounded-lg border border-[#2D3559]/20">
+                  <h4 className="font-medium text-[#222327] flex items-center space-x-2">
+                    <Building2 className="h-4 w-4" />
+                    <span>Company Information</span>
+                  </h4>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-company" className="text-sm font-medium text-[#222327]">Company Name</Label>
+                    <Label htmlFor="register-company" className="text-sm font-medium text-[#222327]">
+                      Company Name
+                    </Label>
                     <Input
                       id="register-company"
                       type="text"
-                      placeholder="Enter your company name"
+                      placeholder="Enter company name"
                       value={registerCompany}
                       onChange={(e) => setRegisterCompany(e.target.value)}
-                      disabled={isLoading}
-                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                     />
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-company-description" className="text-sm font-medium text-[#222327]">Company Description</Label>
+                    <Label htmlFor="register-company-description" className="text-sm font-medium text-[#222327]">
+                      Company Description
+                    </Label>
                     <Input
                       id="register-company-description"
                       type="text"
                       placeholder="Brief description of your company"
                       value={companyDescription}
                       onChange={(e) => setCompanyDescription(e.target.value)}
-                      disabled={isLoading}
-                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                     />
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-company-website" className="text-sm font-medium text-[#222327]">Website</Label>
+                      <Label htmlFor="register-company-website" className="text-sm font-medium text-[#222327]">
+                        Website
+                      </Label>
                       <Input
                         id="register-company-website"
                         type="url"
-                        placeholder="https://company.com"
+                        placeholder="https://example.com"
                         value={companyWebsite}
                         onChange={(e) => setCompanyWebsite(e.target.value)}
-                        disabled={isLoading}
-                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                        className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                       />
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="register-company-industry" className="text-sm font-medium text-[#222327]">Industry</Label>
+                      <Label htmlFor="register-company-industry" className="text-sm font-medium text-[#222327]">
+                        Industry
+                      </Label>
                       <Input
                         id="register-company-industry"
                         type="text"
-                        placeholder="e.g., Technology, Healthcare"
+                        placeholder="e.g., Technology"
                         value={companyIndustry}
                         onChange={(e) => setCompanyIndustry(e.target.value)}
-                        disabled={isLoading}
-                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                        className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                       />
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="register-company-size" className="text-sm font-medium text-[#222327]">Company Size</Label>
-                      <Select value={companySize} onValueChange={(value) => setCompanySize(value as 'small' | 'medium' | 'large')} disabled={isLoading}>
-                        <SelectTrigger className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm">
-                          <SelectValue placeholder="Select company size" />
+                      <Label htmlFor="register-company-size" className="text-sm font-medium text-[#222327]">
+                        Company Size
+                      </Label>
+                      <Select value={companySize} onValueChange={(value: 'small' | 'medium' | 'large') => setCompanySize(value)}>
+                        <SelectTrigger className="focus:ring-[#2D3559] focus:border-[#2D3559]">
+                          <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectItem value="small">Small (1-50 employees)</SelectItem>
@@ -477,29 +497,31 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="register-company-location" className="text-sm font-medium text-[#222327]">Location</Label>
+                      <Label htmlFor="register-company-location" className="text-sm font-medium text-[#222327]">
+                        Location
+                      </Label>
                       <Input
                         id="register-company-location"
                         type="text"
-                        placeholder="City, Country"
+                        placeholder="e.g., San Francisco, CA"
                         value={companyLocation}
                         onChange={(e) => setCompanyLocation(e.target.value)}
-                        disabled={isLoading}
-                        className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                        className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                       />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
-                    <Label htmlFor="register-company-founded-year" className="text-sm font-medium text-[#222327]">Founded Year</Label>
+                    <Label htmlFor="register-company-founded" className="text-sm font-medium text-[#222327]">
+                      Founded Year
+                    </Label>
                     <Input
-                      id="register-company-founded-year"
+                      id="register-company-founded"
                       type="number"
-                      placeholder="e.g., 2020"
-                      value={companyFoundedYear.toString()}
-                      onChange={(e) => setCompanyFoundedYear(Number(e.target.value))}
-                      disabled={isLoading}
-                      className="h-11 border-[#2D3559]/20 focus:border-[#FF7C23] focus:ring-[#FF7C23]/20 text-sm"
+                      placeholder="2020"
+                      value={companyFoundedYear}
+                      onChange={(e) => setCompanyFoundedYear(parseInt(e.target.value) || new Date().getFullYear())}
+                      className="focus:ring-[#2D3559] focus:border-[#2D3559]"
                     />
                   </div>
                 </div>
@@ -507,17 +529,17 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
               
               <Button 
                 type="submit" 
-                className="w-full h-11 bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#FF7C23] hover:to-[#A3D958] text-white font-medium text-sm shadow-lg hover:shadow-xl transition-all duration-200" 
+                className="w-full bg-gradient-to-r from-[#FF7C23] to-[#2D3559] hover:from-[#e65a1a] hover:to-[#1a1f2e] text-white transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Creating account...
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Creating Account...
                   </>
                 ) : (
                   <>
-                    <UserPlus className="mr-2 h-4 w-4" />
+                    <UserPlus className="h-4 w-4 mr-2" />
                     Create Account
                   </>
                 )}

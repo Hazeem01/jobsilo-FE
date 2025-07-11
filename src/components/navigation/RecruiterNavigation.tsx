@@ -1,14 +1,16 @@
 import React from "react";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Brain, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const RecruiterNavigation = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
 
   const handleLogout = async () => {
     await logout();
+    navigate('/');
   };
 
   return (
