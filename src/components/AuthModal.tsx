@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Eye, EyeOff, User, Building2, Mail, Lock, UserPlus, LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -289,6 +289,19 @@ export const AuthModal = ({ isOpen, onClose }: AuthModalProps) => {
                     {showLoginPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                   </button>
                 </div>
+              </div>
+              
+              <div className="flex justify-end">
+                <Link
+                  to="/forgot-password"
+                  className="text-sm font-medium text-[#FF7C23] hover:text-[#e65a1a] hover:underline transition-colors"
+                  onClick={() => {
+                    onClose();
+                    setActiveTab('login');
+                  }}
+                >
+                  Forgot password?
+                </Link>
               </div>
               
               <Button 

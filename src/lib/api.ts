@@ -323,6 +323,19 @@ export interface ApiInfoResponse {
   };
 }
 
+export interface PasswordResetRequestResponse {
+  success: boolean;
+  message: string;
+}
+
+export interface PasswordResetResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    email: string;
+  };
+}
+
 // Application interfaces for the new endpoints
 export interface Application {
   id: string;
@@ -451,6 +464,20 @@ class ApiClient {
   async logout(): Promise<{ success: boolean; data: { message: string } }> {
     return this.request<{ success: boolean; data: { message: string } }>('/auth/logout', {
       method: 'POST',
+    });
+  }
+
+  async requestPasswordReset(email: string): Promise<PasswordResetRequestResponse> {
+    return this.request<PasswordResetRequestResponse>('/auth/password/reset-request', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(resetToken: string, newPassword: string): Promise<PasswordResetResponse> {
+    return this.request<PasswordResetResponse>('/auth/password/reset', {
+      method: 'POST',
+      body: JSON.stringify({ resetToken, newPassword }),
     });
   }
 
