@@ -79,7 +79,7 @@ const documentTemplates = {
 // AI enhancement suggestions
 const aiSuggestions = [
   "Add quantifiable achievements to make your resume stand out",
-  "Include industry-specific keywords for better ATS optimization",
+  "Include industry-specific keywords for better ATS optimisation",
   "Highlight transferable skills that apply to multiple roles",
   "Use action verbs to describe your responsibilities",
   "Include metrics and percentages to demonstrate impact",
@@ -503,7 +503,7 @@ const ApplicantDashboard = () => {
                 onResumeParsed={(data) => {
                   toast({
                     title: "Resume parsed!",
-                    description: "Your resume has been analyzed successfully.",
+                    description: "Your resume has been analysed successfully.",
                   });
                 }}
                 onFileUploaded={(data) => {
@@ -518,8 +518,8 @@ const ApplicantDashboard = () => {
               <JobAnalysis 
                 onAnalysisComplete={(data) => {
                   toast({
-                    title: "Job analyzed!",
-                    description: "Job has been analyzed successfully.",
+                    title: "Job analysed!",
+                    description: "Job has been analysed successfully.",
                   });
                 }}
               />

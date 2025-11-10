@@ -52,13 +52,13 @@ const JobAnalysis = ({ onAnalysisComplete }: JobAnalysisProps) => {
 
       toast({
         title: "Analysis complete!",
-        description: "Job has been analyzed successfully.",
+        description: "Job has been analysed successfully.",
       });
 
     } catch (error) {
       toast({
         title: "Analysis failed",
-        description: "There was an error analyzing the job. Please try again.",
+        description: "There was an error analysing the job. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -149,12 +149,12 @@ const JobAnalysis = ({ onAnalysisComplete }: JobAnalysisProps) => {
             {isAnalyzing ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Analyzing...
+                Analysing...
               </>
             ) : (
               <>
                 <Brain className="h-4 w-4 mr-2" />
-                Analyze Job
+                Analyse Job
               </>
             )}
           </Button>
@@ -167,7 +167,7 @@ const JobAnalysis = ({ onAnalysisComplete }: JobAnalysisProps) => {
               <CheckCircle className="h-4 w-4 text-green-600" />
               <div>
                 <p className="text-sm font-medium text-green-800">Analysis Complete</p>
-                <p className="text-xs text-green-600">Job has been analyzed successfully</p>
+                <p className="text-xs text-green-600">Job has been analysed successfully</p>
               </div>
             </div>
 

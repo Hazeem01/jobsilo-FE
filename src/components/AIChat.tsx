@@ -119,7 +119,7 @@ const AIChat = () => {
             <div className="space-y-2">
               <h3 className="text-xl font-semibold text-[#222327]">Sign in to chat with AI</h3>
               <p className="text-sm text-[#2D3559] leading-relaxed">
-                Get personalized recruitment assistance, candidate insights, and hiring recommendations powered by AI
+                Get personalised recruitment assistance, candidate insights, and hiring recommendations powered by AI
               </p>
             </div>
             <div className="pt-2">

@@ -135,7 +135,7 @@ const ResumeUpload = ({ onResumeParsed, onFileUploaded }: ResumeUploadProps) => 
 
       toast({
         title: "Resume parsed successfully!",
-        description: "Your resume has been analyzed and structured.",
+        description: "Your resume has been analysed and structured.",
       });
 
     } catch (error) {
@@ -174,7 +174,7 @@ const ResumeUpload = ({ onResumeParsed, onFileUploaded }: ResumeUploadProps) => 
       onResumeParsed?.(result.data);
       toast({
         title: "Resume parsed successfully!",
-        description: "Your resume has been analyzed and structured.",
+        description: "Your resume has been analysed and structured.",
       });
     } catch (error) {
       toast({

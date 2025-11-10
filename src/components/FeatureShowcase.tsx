@@ -43,7 +43,7 @@ const features: Feature[] = [
     id: 3,
     title: "AI Chat Assistant",
     description:
-      "Get personalized career advice, interview tips, and job search strategies from our intelligent AI assistant",
+      "Get personalised career advice, interview tips, and job search strategies from our intelligent AI assistant",
     icon: MessageSquare,
     color: "from-green-500 to-emerald-500",
     image:
