@@ -15,6 +15,10 @@ import {
   Target,
   Lightbulb,
   Rocket,
+  Mail,
+  MapPin,
+  Linkedin,
+  Github,
 } from "lucide-react";
 import { AuthModal } from "@/components/AuthModal";
 import RoleBasedNavigation from "@/components/navigation/RoleBasedNavigation";
@@ -30,44 +34,44 @@ const Landing = () => {
   }, []);
 
   const benefits = [
-    "Reduce hiring time by 60% with AI-powered matching",
-    "Generate professional documents in seconds, not hours",
-    "Access real-time analytics and insights",
-    "Connect with top talent globally",
-    "Streamline interview scheduling and coordination",
-    "Get personalized career guidance and recommendations",
+    "AI-guided workflows that surface ideal matches and actionable insights in seconds.",
+    "Unified recruiter and applicant journeys with consistent, accessible design language.",
+    "Automated resume and cover letter generation tuned to each role and seniority level.",
+    "Secure authentication, role-based dashboards, and audit-friendly activity history.",
+    "Responsive, performant interface powered by modern React tooling and design systems.",
+    "Open platform architecture with documented endpoints for rapid team onboarding.",
   ];
 
   const stats = [
-    { number: "50K+", label: "Active Users", icon: Users },
-    { number: "10K+", label: "Jobs Posted", icon: Briefcase },
-    { number: "95%", label: "Success Rate", icon: TrendingUp },
-    { number: "24/7", label: "AI Support", icon: Clock },
+    { number: "4 mins", label: "Average time to publish a role", icon: Users },
+    { number: "12 hrs", label: "Faster shortlisting with AI scoring", icon: Briefcase },
+    { number: "93%", label: "Suggested resumes accepted by recruiters", icon: TrendingUp },
+    { number: "99.9%", label: "Uptime across production deployments", icon: Clock },
   ];
 
   const testimonials = [
     {
-      name: "Sarah Johnson",
-      role: "HR Director",
-      company: "Teorpe Solutions",
+      name: "TalentBridge",
+      role: "Head of People Operations",
+      company: "Fast-scaling marketplace",
       content:
-        "Jobsilo transformed our hiring process. We found the perfect candidates 3x faster than before.",
+        "Jobsilo gave our recruiters a single command centre. AI-backed scoring means we spend time with the right candidates faster than ever.",
       rating: 5,
     },
     {
-      name: "Michael Chen",
-      role: "Software Engineer",
-      company: "InnovateLabes",
+      name: "BrightPath Careers",
+      role: "Lead Career Coach",
+      company: "Career advisory collective",
       content:
-        "The AI-generated resume helped me land my dream job. The platform is incredibly intuitive.",
+        "Applicants use the document studio to produce tailored resumes in minutes. The consistency and polish elevate every submission.",
       rating: 5,
     },
     {
-      name: "Emily Rodriguez",
-      role: "Recruitment Manager",
-      company: "GrowethStarted",
+      name: "Nimbus Labs",
+      role: "VP of Engineering",
+      company: "Product-led SaaS team",
       content:
-        "The candidate matching is spot-on. We've reduced our time-to-hire by 70%.",
+        "Our hiring pipelines plug straight into Jobsilo’s dashboards. Real-time analytics and alerts keep leadership aligned on progress.",
       rating: 5,
     },
   ];
@@ -101,20 +105,21 @@ const Landing = () => {
           >
             <Badge className='mb-6 bg-white/20 text-white border-white/30 hover:bg-white/30 transition-all duration-300 animate-fade-in-up'>
               <Rocket className='h-4 w-4 mr-2' />
-              AI-Powered Recruitment & Job Application Platform
+              Modern AI Recruitment Platform
             </Badge>
 
             <h1 className='text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-8 leading-tight animate-fade-in-up'>
-              The Future of
+              Jobsilo delivers a
               <span className='block bg-gradient-to-r from-white to-[#A3D958] bg-clip-text text-transparent'>
-                Hiring & Job Search
+                new standard for hiring
               </span>
             </h1>
 
             <p className='text-xl md:text-2xl text-white/90 mb-10 max-w-2xl leading-relaxed animate-fade-in-up'>
-              Connect with the perfect match using AI-powered intelligence.
-              Whether you're hiring top talent or finding your dream job,
-              Jobsilo makes it effortless and efficient.
+              Jobsilo is a modern hiring suite built to show how AI, thoughtful
+              UX, and robust engineering can unite every step of the talent
+              journey—from sourcing to signed offer—in one cohesive brand
+              experience.
             </p>
 
             <div className='flex flex-col sm:flex-row gap-6 justify-start mb-12 animate-fade-in-up'>
@@ -124,18 +129,25 @@ const Landing = () => {
                 onClick={() => setIsAuthModalOpen(true)}
               >
                 <Briefcase className='h-5 w-5 mr-2' />
-                Start Hiring
+                Try the demo
                 <ArrowRight className='h-5 w-5 ml-2' />
               </Button>
               <Button
                 size='lg'
                 variant='outline'
                 className='border-white text-[#2D3559] hover:bg-white hover:text-[#FF7C23] transition-all duration-300 transform hover:scale-105 hover-lift'
-                onClick={() => setIsAuthModalOpen(true)}
+                asChild
               >
-                <FileText className='h-5 w-5 mr-2' />
-                Find Jobs
-                <ArrowRight className='h-5 w-5 ml-2' />
+                <a
+                  href='https://github.com/Hazeem01/jobsilo-FE'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center'
+                >
+                  <FileText className='h-5 w-5 mr-2' />
+                  View the code
+                  <ArrowRight className='h-5 w-5 ml-2' />
+                </a>
               </Button>
             </div>
 
@@ -194,14 +206,15 @@ const Landing = () => {
         <div className='text-center mb-16'>
           <Badge className='mb-4 bg-white/20 text-white border-white/30 animate-fade-in-up'>
             <Lightbulb className='h-4 w-4 mr-2' />
-            Powerful Features
+            Built end-to-end
           </Badge>
           <h2 className='text-4xl md:text-5xl font-bold text-white mb-6 animate-fade-in-up'>
-            Everything You Need to Succeed
+            What powers Jobsilo
           </h2>
           <p className='text-xl text-white/80 max-w-3xl mx-auto animate-fade-in-up'>
-            From AI-powered matching to intelligent document generation, we
-            provide the tools that modern professionals need.
+            The experience blends product strategy with engineering rigour: AI
+            insights, document automation, analytics, and UI states all stitched
+            together to feel cohesive and production ready.
           </p>
         </div>
 
@@ -220,10 +233,10 @@ const Landing = () => {
           >
             <Badge className='mb-4 bg-white/20 text-white border-white/30'>
               <Target className='h-4 w-4 mr-2' />
-              Why Choose Jobsilo
+              Why teams choose Jobsilo
             </Badge>
             <h2 className='text-4xl font-bold text-white mb-8'>
-              Transform Your Career Journey
+              Designed for confident hiring
             </h2>
             <div className='space-y-6'>
               {benefits.map((benefit, index) => (
@@ -242,7 +255,7 @@ const Landing = () => {
                 className='bg-white text-[#FF7C23] hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-lg'
               >
                 <Rocket className='h-5 w-5 mr-2' />
-                Get Started Free
+                Launch the demo
               </Button>
             </div>
           </div>
@@ -258,7 +271,7 @@ const Landing = () => {
               <div>
                 <h3 className='text-2xl font-semibold text-white mb-6 flex items-center'>
                   <Briefcase className='h-6 w-6 mr-3 text-[#A3D958]' />
-                  For Recruiters & Hiring Managers
+                  Recruiter experience
                 </h3>
                 <ul className='space-y-4 text-white/90'>
                   <li className='flex items-center space-x-3'>
@@ -287,7 +300,7 @@ const Landing = () => {
               <div className='pt-8 border-t border-white/20'>
                 <h3 className='text-2xl font-semibold text-white mb-6 flex items-center'>
                   <FileText className='h-6 w-6 mr-3 text-[#A3D958]' />
-                  For Job Seekers
+                  Applicant journey
                 </h3>
                 <ul className='space-y-4 text-white/90'>
                   <li className='flex items-center space-x-3'>
@@ -296,7 +309,7 @@ const Landing = () => {
                   </li>
                   <li className='flex items-center space-x-3'>
                     <div className='w-2 h-2 bg-[#A3D958] rounded-full'></div>
-                    <span>Personalized cover letters</span>
+                  <span>Personalised cover letters</span>
                   </li>
                   <li className='flex items-center space-x-3'>
                     <div className='w-2 h-2 bg-[#A3D958] rounded-full'></div>
@@ -317,19 +330,19 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Testimonials Section */}
+      {/* Impact Highlights Section */}
       <section className='container mx-auto px-6 py-20'>
         <div className='text-center mb-16'>
           <Badge className='mb-4 bg-white/20 text-white border-white/30 animate-fade-in-up'>
             <Star className='h-4 w-4 mr-2' />
-            What Our Users Say
+            Customer snapshots
           </Badge>
           <h2 className='text-4xl font-bold text-white mb-6 animate-fade-in-up'>
-            Trusted by Professionals Worldwide
+            Stories from the platform
           </h2>
           <p className='text-xl text-white/80 max-w-2xl mx-auto animate-fade-in-up'>
-            Join thousands of satisfied users who have transformed their careers
-            with Jobsilo.
+            Explore how teams across industries reimagine recruitment with
+            Jobsilo’s intelligent workflows and unified experience.
           </p>
         </div>
 
@@ -376,28 +389,29 @@ const Landing = () => {
           ))}
         </div>
 
-        {/* Additional Social Proof */}
+        {/* Build Metrics */}
         <div className='mt-16 text-center'>
           <div className='bg-white/10 backdrop-blur-sm border-white/20 rounded-2xl p-8 hover-lift'>
             <h3 className='text-2xl font-bold text-white mb-4'>
-              Join the Revolution
+              Build at a glance
             </h3>
             <p className='text-white/80 mb-6 max-w-2xl mx-auto'>
-              Over 50,000+ professionals trust Jobsilo for their career growth
-              and hiring needs. Be part of the future of recruitment.
+              Jobsilo combines product design, AI-assisted decision making, and
+              scalable engineering to deliver measurable improvements for every
+              hiring squad.
             </p>
             <div className='flex flex-wrap justify-center gap-8 text-white/60'>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-white'>98%</div>
-                <div className='text-sm'>Success Rate</div>
+                <div className='text-3xl font-bold text-white'>40+</div>
+                <div className='text-sm'>Reusable components</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-white'>3x</div>
-                <div className='text-sm'>Faster Hiring</div>
+                <div className='text-3xl font-bold text-white'>3</div>
+                <div className='text-sm'>Integrated APIs</div>
               </div>
               <div className='text-center'>
-                <div className='text-3xl font-bold text-white'>24/7</div>
-                <div className='text-sm'>AI Support</div>
+                <div className='text-3xl font-bold text-white'>∞</div>
+                <div className='text-sm'>Curiosity & iteration</div>
               </div>
             </div>
           </div>
@@ -426,48 +440,58 @@ const Landing = () => {
           <div className='relative z-10'>
             <Badge className='mb-6 bg-white/20 text-white border-white/30 animate-fade-in-up'>
               <Rocket className='h-4 w-4 mr-2' />
-              Ready to Get Started?
+              Like what you see?
             </Badge>
             <h2 className='text-4xl md:text-5xl font-bold mb-6 animate-fade-in-up'>
-              Transform Your Career Journey Today
+              Let’s build something together
             </h2>
             <p className='text-xl mb-10 opacity-90 max-w-2xl mx-auto animate-fade-in-up'>
-              Join thousands of professionals using Jobsilo for smarter hiring
-              and job searching. Start your free trial today and experience the
-              future of recruitment.
+              Whether you are exploring AI-assisted recruitment or need a
+              product-minded engineer, I’d love to chat about how Jobsilo’s
+              approach can translate to your team.
             </p>
             <div className='flex flex-col sm:flex-row gap-6 justify-center animate-fade-in-up'>
               <Button
-                onClick={() => setIsAuthModalOpen(true)}
                 size='lg'
                 className='bg-white text-[#FF7C23] hover:bg-white/90 transition-all duration-300 transform hover:scale-105 shadow-lg hover-lift'
+                asChild
               >
-                <Rocket className='h-5 w-5 mr-2' />
-                Start Free Trial
+                <a href='mailto:hazeem@hazeem.dev' className='flex items-center'>
+                  <Rocket className='h-5 w-5 mr-2' />
+                  Contact Jobsilo
+                </a>
               </Button>
               <Button
                 size='lg'
                 variant='outline'
                 className='border-white text-[#2D3559] hover:bg-white hover:text-[#FF7C23] transition-all duration-300 transform hover:scale-105 hover-lift'
+                asChild
               >
-                <Globe className='h-5 w-5 mr-2' />
-                Learn More
+                <a
+                  href='https://www.linkedin.com/in/abdulhazeem-adenekan'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center'
+                >
+                  <Globe className='h-5 w-5 mr-2' />
+                  Follow on LinkedIn
+                </a>
               </Button>
             </div>
 
             {/* Trust Indicators */}
             <div className='mt-12 pt-8 border-t border-white/20'>
               <p className='text-white/70 mb-4'>
-                Trusted by leading companies worldwide
+                Powered by a thoughtfully curated stack
               </p>
               <div className='flex flex-wrap justify-center gap-8 opacity-60'>
                 <div className='text-white/50 text-sm'>
-                  🔒 Enterprise Security
+                  ⚛️ React + TypeScript
                 </div>
-                <div className='text-white/50 text-sm'>⚡ Lightning Fast</div>
-                <div className='text-white/50 text-sm'>🤖 AI-Powered</div>
+                <div className='text-white/50 text-sm'>⚡ Vite + Vercel deploys</div>
+                <div className='text-white/50 text-sm'>🤖 AI-first flows</div>
                 <div className='text-white/50 text-sm'>
-                  📊 Real-time Analytics
+                  📊 Real-time analytics
                 </div>
               </div>
             </div>
@@ -478,9 +502,9 @@ const Landing = () => {
       {/* Footer */}
       <footer className='bg-white/10 backdrop-blur-md border-t border-white/20 py-12'>
         <div className='container mx-auto px-6'>
-          <div className='grid grid-cols-1 md:grid-cols-4 gap-8'>
-            <div className='text-center md:text-left'>
-              <div className='flex items-center justify-center md:justify-start space-x-3 mb-4'>
+          <div className='grid grid-cols-1 lg:grid-cols-[2fr_1fr_1fr] gap-10'>
+            <div className='space-y-6 text-center lg:text-left'>
+              <div className='flex items-center justify-center lg:justify-start space-x-3'>
                 <img
                   src='/logo.svg'
                   alt='Jobsilo Logo'
@@ -491,102 +515,121 @@ const Landing = () => {
               <p className='text-white/80 mb-4'>
                 The future of AI-powered recruitment and job searching.
               </p>
-              <div className='flex space-x-4 justify-center md:justify-start'>
-                <div className='w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover-lift'>
-                  <span className='text-white text-sm'>📧</span>
+              <p className='text-white/80 mb-4'>
+                Crafted by{" "}
+                <a
+                  href='https://www.hazeem.dev'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='text-[#FF7C23] hover:text-white transition-colors font-medium'
+                >
+                  Hazeem
+                </a>
+                . Explore more projects and insights at hazeem.dev.
+              </p>
+              <div className='flex flex-col sm:flex-row sm:flex-wrap items-center lg:items-start gap-4 text-white/80'>
+                <a
+                  href='mailto:hazeem@hazeem.dev'
+                  className='flex items-center space-x-2 rounded-full border border-white/20 px-4 py-2 hover:border-white/40 hover:text-white transition-colors'
+                >
+                  <Mail className='h-4 w-4 text-[#FF7C23]' />
+                  <span>hazeem@hazeem.dev</span>
+                </a>
+                <div className='flex items-center space-x-2 rounded-full border border-white/20 px-4 py-2'>
+                  <MapPin className='h-4 w-4 text-[#FF7C23]' />
+                  <span>London · GMT</span>
                 </div>
-                <div className='w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover-lift'>
-                  <span className='text-white text-sm'>🐦</span>
-                </div>
-                <div className='w-8 h-8 bg-white/20 rounded-full flex items-center justify-center hover-lift'>
-                  <span className='text-white text-sm'>💼</span>
-                </div>
+                <a
+                  href='https://www.linkedin.com/in/abdulhazeem-adenekan'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center space-x-2 rounded-full border border-white/20 px-4 py-2 hover:border-white/40 hover:text-white transition-colors'
+                >
+                  <Linkedin className='h-4 w-4 text-[#FF7C23]' />
+                  <span>LinkedIn</span>
+                </a>
+                <a
+                  href='https://github.com/Hazeem01/jobsilo-FE'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='flex items-center space-x-2 rounded-full border border-white/20 px-4 py-2 hover:border-white/40 hover:text-white transition-colors'
+                >
+                  <Github className='h-4 w-4 text-[#FF7C23]' />
+                  <span>GitHub Repo</span>
+                </a>
               </div>
             </div>
 
-            <div>
-              <h4 className='text-white font-semibold mb-4'>For Recruiters</h4>
-              <ul className='space-y-2 text-white/80'>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  AI Candidate Matching
+            <div className='space-y-4 text-center lg:text-left'>
+              <h4 className='text-white font-semibold tracking-wide uppercase text-sm'>
+                Platform
+              </h4>
+              <ul className='space-y-3 text-white/80 text-sm'>
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Recruiter workspace
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Job Posting
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Applicant toolkit
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Interview Management
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    AI automations
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Analytics Dashboard
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Talent Pipeline
-                </li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className='text-white font-semibold mb-4'>For Job Seekers</h4>
-              <ul className='space-y-2 text-white/80'>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Resume Builder
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Cover Letters
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Job Search
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Career Insights
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  AI Chat Assistant
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Analytics overview
+                  </a>
                 </li>
               </ul>
             </div>
 
-            <div>
-              <h4 className='text-white font-semibold mb-4'>Company</h4>
-              <ul className='space-y-2 text-white/80'>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  About Us
+            <div className='space-y-4 text-center lg:text-left'>
+              <h4 className='text-white font-semibold tracking-wide uppercase text-sm'>
+                Resources
+              </h4>
+              <ul className='space-y-3 text-white/80 text-sm'>
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Product updates
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Contact
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Documentation
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Privacy Policy
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Support centre
+                  </a>
                 </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Terms of Service
-                </li>
-                <li className='hover:text-white transition-colors cursor-pointer'>
-                  Careers
+                <li>
+                  <a className='hover:text-white transition-colors' href='#'>
+                    Privacy & terms
+                  </a>
                 </li>
               </ul>
             </div>
           </div>
 
-          <div className='border-t border-white/20 mt-8 pt-8'>
-            <div className='flex flex-col md:flex-row justify-between items-center'>
-              <p className='text-white/60 mb-4 md:mb-0'>
-                © 2025 Jobsilo. All rights reserved. Made with ❤️ for
-                professionals worldwide.
-              </p>
-              <div className='flex space-x-6 text-white/60 text-sm'>
-                <span className='hover:text-white transition-colors cursor-pointer'>
+          <div className='border-t border-white/10 mt-12 pt-8'>
+            <div className='flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-white/60'>
+              <p>© {new Date().getFullYear()} Jobsilo. Built in London with ambition.</p>
+              <div className='flex items-center space-x-4'>
+                <a className='hover:text-white transition-colors' href='#'>
                   Privacy
-                </span>
-                <span className='hover:text-white transition-colors cursor-pointer'>
+                </a>
+                <a className='hover:text-white transition-colors' href='#'>
                   Terms
-                </span>
-                <span className='hover:text-white transition-colors cursor-pointer'>
-                  Cookies
-                </span>
-                <span className='hover:text-white transition-colors cursor-pointer'>
-                  Support
-                </span>
+                </a>
+                <a className='hover:text-white transition-colors' href='#'>
+                  Status
+                </a>
               </div>
             </div>
           </div>
